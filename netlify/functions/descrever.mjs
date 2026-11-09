@@ -3,8 +3,29 @@
 import { GoogleGenAI, ApiError } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
 
-const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); // chave configurada no Netlify
-const MODELO = process.env.GEMINI_MODEL || "gemini-flash-latest";
+// Chave configurada no Netlify. A versão v1beta é a que aceita todos os modelos e a resposta em JSON.
+const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY, apiVersion: "v1beta" });
+
+// Modelos tentados em ordem: se um não existir para a sua chave (erro 404), tenta o próximo.
+// Para escolher um modelo específico, crie a variável GEMINI_MODEL no Netlify.
+const MODELOS = [process.env.GEMINI_MODEL, "gemini-2.5-flash", "gemini-3.5-flash", "gemini-flash-latest"].filter(Boolean);
+let modeloQueFunciona = null; // lembra o modelo que deu certo enquanto a função estiver ativa
+
+async function gerar(pedido) {
+  const lista = modeloQueFunciona ? [modeloQueFunciona] : MODELOS;
+  let ultimoErro;
+  for (const model of lista) {
+    try {
+      const resposta = await gemini.models.generateContent({ model, ...pedido });
+      modeloQueFunciona = model;
+      return resposta;
+    } catch (erro) {
+      ultimoErro = erro;
+      if (!(erro instanceof ApiError && erro.status === 404)) throw erro;
+    }
+  }
+  throw ultimoErro;
+}
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 const CATEGORIAS = {
@@ -56,8 +77,7 @@ export default async function handler(req) {
 
   // 3. Pede o texto à IA
   try {
-    const resposta = await gemini.models.generateContent({
-      model: MODELO,
+    const resposta = await gerar({
       contents: [
         { inlineData: { mimeType: partes[1], data: partes[2] } },
         { text: pedido },
