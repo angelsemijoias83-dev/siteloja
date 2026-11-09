@@ -77,18 +77,20 @@ export default async function handler(req) {
     return json(200, { nome, descricao });
   } catch (erro) {
     console.error(erro);
+    // Detalhe técnico curto, para ajudar a descobrir o problema (o Google não repete a chave na mensagem)
+    const detalhe = ` [Detalhe: ${erro?.status ?? ""} ${String(erro?.message ?? erro).slice(0, 220)}]`;
     if (erro instanceof ApiError) {
       if (erro.status === 400) {
-        return json(500, { erro: "A IA recusou o pedido. Confira a chave GEMINI_API_KEY no Netlify ou tente outra foto." });
+        return json(500, { erro: "A IA recusou o pedido. Confira a chave GEMINI_API_KEY no Netlify ou tente outra foto." + detalhe });
       }
       if (erro.status === 401 || erro.status === 403) {
-        return json(500, { erro: "A chave do Gemini (GEMINI_API_KEY) está errada ou faltando no Netlify." });
+        return json(500, { erro: "A chave do Gemini (GEMINI_API_KEY) está errada ou faltando no Netlify." + detalhe });
       }
       if (erro.status === 429) {
-        return json(429, { erro: "Limite de uso da IA atingido. Espere um minuto e tente de novo." });
+        return json(429, { erro: "Limite de uso da IA atingido. Espere um minuto e tente de novo." + detalhe });
       }
-      return json(502, { erro: `A IA respondeu com erro (${erro.status}). Tente de novo em instantes.` });
+      return json(502, { erro: `A IA respondeu com erro (${erro.status}). Tente de novo em instantes.` + detalhe });
     }
-    return json(500, { erro: "Não foi possível gerar a descrição agora. Tente de novo." });
+    return json(500, { erro: "Não foi possível gerar a descrição agora. Tente de novo." + detalhe });
   }
 }
