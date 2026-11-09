@@ -5,7 +5,7 @@ window.ANGEL = {
   SUPABASE_ANON_KEY: "sb_publishable_JJVPRf15Abkls4oadRE-Xg_hMoC-gKT",
   WHATSAPP: "5518981196386",        // DDI + DDD + número, só dígitos (usado no link do WhatsApp)
   TELEFONE: "(18) 98119-6386",      // como o número aparece no site
-  INSTAGRAM: "angelsemijoias",
+  INSTAGRAM: "angelsemijoia",
   FRETE_GRATIS_ACIMA: 199,
   PARCELAS: 3,
 };
