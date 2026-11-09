@@ -13,8 +13,8 @@
   --band-ink:#FFE9DC;
   --logo:#46260F;
   --font-display:"Libre Baskerville","Baskerville","Georgia",serif;
-  --font-body:"Jost","Segoe UI",system-ui,sans-serif;
-  --step-0:1rem; --step-1:1.25rem; --step-2:1.6rem; --step-3:2.2rem; --step-4:clamp(2.4rem,6vw,4rem);
+  --font-body:"Libre Baskerville","Baskerville","Georgia",serif;
+  --step-0:.94rem; --step-1:1.25rem; --step-2:1.6rem; --step-3:2.2rem; --step-4:clamp(2.4rem,6vw,4rem);
   --logo-img:url("img/logo-mascara.png");
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -25,7 +25,7 @@
   --gold:#F2C3A6;--gold-soft:#4A3024;--rose:#E8B9A0;--band:#120B08;--band-ink:#FFE9DC;--logo:#FFE9DC;color-scheme:dark}
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.6;font-weight:400}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.75;font-weight:400}
 .wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--font-display);font-style:italic;font-weight:400;text-wrap:balance;margin:0;line-height:1.25}
 .eyebrow{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500}
@@ -53,7 +53,7 @@ nav.links a:hover{color:var(--ink)}
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:56px 40px}
 .hero h1{font-size:clamp(2.1rem,5.2vw,3.5rem);margin-block:12px 18px;letter-spacing:-.01em}
 .hero h1 em{font-style:normal;color:var(--gold)}
-.hero p{color:var(--muted);max-width:46ch;margin:0 0 28px;font-weight:300;font-size:1.08rem}
+.hero p{color:var(--muted);max-width:46ch;margin:0 0 28px;font-weight:400;font-size:1.08rem}
 .cta{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-block;border-radius:999px;padding:12px 26px;border:1px solid var(--ink);background:var(--gold);border-color:var(--gold);color:var(--bg);text-decoration:none;font-size:.95rem;letter-spacing:.03em}
 .btn.ghost{background:transparent;color:var(--ink)}
