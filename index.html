@@ -95,32 +95,13 @@
   </div>
 </section>
 
-<section class="about" id="sobre">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow">Sobre a Angel</div>
-      <h2>Semijoias escolhidas com carinho, peça por peça.</h2>
-      <p>A Angel Semijoias nasceu da vontade de oferecer peças bonitas, duráveis e acessíveis. Cada modelo passa pela nossa curadoria antes de chegar até você.</p>
-      <p>Atendimento direto pelo WhatsApp, do jeito que você gosta: rápido, próximo e com dicas para combinar as peças.</p>
-    </div>
-    <div id="cuidados">
-      <div class="eyebrow">Como cuidar</div>
-      <h2>Para o brilho durar</h2>
-      <ul class="care">
-        <li><span>i</span><div>Evite contato com perfume, cremes e álcool. Coloque as peças por último.</div></li>
-        <li><span>ii</span><div>Tire antes do banho, da piscina e do mar.</div></li>
-        <li><span>iii</span><div>Limpe com flanela seca e macia depois de usar.</div></li>
-        <li><span>iv</span><div>Guarde separadas, em saquinho fechado, longe da umidade.</div></li>
-      </ul>
-    </div>
-  </div>
-</section>
+
 
 <footer>
   <div class="wrap">
     <div class="marca-nome rodape">Angel Semijoias</div>
-    <nav class="links-rodape" aria-label="Seções">
-      <a href="#sobre">Sobre</a><a href="#cuidados">Cuidados</a>
+    <nav class="links-rodape" aria-label="Informações">
+      <button type="button" data-info="sobre">Sobre a Angel</button><button type="button" data-info="cuidados">Como cuidar</button>
     </nav>
     <span id="contatos"></span>
     <small>© <span id="ano"></span> Angel Semijoias</small>
@@ -133,6 +114,31 @@
     <ul class="menu-lista" id="menuLista"></ul>
   </nav>
 </div>
+
+<div class="drawer centrado" id="modalInfo" hidden>
+  <div class="panel modal" role="dialog" aria-modal="true" aria-labelledby="infoTitulo">
+    <div class="panel-head"><span></span><button class="x" id="fecharInfo" type="button" aria-label="Fechar">×</button></div>
+    <div id="infoConteudo"></div>
+  </div>
+</div>
+
+<template id="t-sobre">
+  <div class="eyebrow">Sobre a Angel</div>
+  <h2 id="infoTitulo">Semijoias escolhidas com carinho, peça por peça.</h2>
+  <p>A Angel Semijoias nasceu da vontade de oferecer peças bonitas, duráveis e acessíveis. Cada modelo passa pela nossa curadoria antes de chegar até você.</p>
+  <p>Atendimento direto pelo WhatsApp, do jeito que você gosta: rápido, próximo e com dicas para combinar as peças.</p>
+</template>
+
+<template id="t-cuidados">
+  <div class="eyebrow">Como cuidar</div>
+  <h2 id="infoTitulo">Para o brilho durar</h2>
+  <ul class="care">
+    <li><span>i</span><div>Evite contato com perfume, cremes e álcool. Coloque as peças por último.</div></li>
+    <li><span>ii</span><div>Tire antes do banho, da piscina e do mar.</div></li>
+    <li><span>iii</span><div>Limpe com flanela seca e macia depois de usar.</div></li>
+    <li><span>iv</span><div>Guarde separadas, em saquinho fechado, longe da umidade.</div></li>
+  </ul>
+</template>
 
 <div class="drawer" id="drawer" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="bagTitle">
@@ -231,7 +237,7 @@ $("verFavoritos").onclick = () => { filtro = "favoritos"; renderChips(); renderG
 // menu
 const menu = $("menu");
 $("menuLista").innerHTML = cats.map(([k,l]) => `<li><button type="button" data-cat="${k}">${l}</button></li>`).join("") +
-  `<li class="sep"></li><li><a href="#sobre">Sobre a Angel</a></li><li><a href="#cuidados">Como cuidar</a></li>` +
+  `<li class="sep"></li><li><button type="button" data-info="sobre">Sobre a Angel</button></li><li><button type="button" data-info="cuidados">Como cuidar</button></li>` +
   `<li><a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a></li>` +
   `<li><a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">Instagram @${esc(C.INSTAGRAM)}</a></li>`;
 $("abrirMenu").onclick = () => { menu.hidden = false; };
@@ -239,15 +245,23 @@ $("fecharMenu").onclick = () => { menu.hidden = true; };
 menu.addEventListener("click", e => {
   if (e.target === menu) { menu.hidden = true; return; }
   const c = e.target.closest("[data-cat]"); if (c) { filtro = c.dataset.cat; renderChips(); renderGrid(); menu.hidden = true; irParaColecao(); return; }
+  const info = e.target.closest("[data-info]"); if (info) { menu.hidden = true; abrirInfo(info.dataset.info); return; }
   if (e.target.closest("a")) menu.hidden = true;
 });
+
+// janelinha com "Sobre a Angel" e "Como cuidar" (abre pelo rodapé e pelo menu)
+const modalInfo = $("modalInfo");
+function abrirInfo(qual){ $("infoConteudo").innerHTML = ""; $("infoConteudo").appendChild(document.getElementById("t-"+qual).content.cloneNode(true)); modalInfo.hidden = false; }
+document.querySelectorAll(".links-rodape [data-info]").forEach(b => b.addEventListener("click", () => abrirInfo(b.dataset.info)));
+$("fecharInfo").onclick = () => { modalInfo.hidden = true; };
+modalInfo.addEventListener("click", e => { if (e.target === modalInfo) modalInfo.hidden = true; });
 
 // sacolinha
 const drawer = $("drawer");
 $("openBag").onclick = () => { drawer.hidden = false; };
 $("closeBag").onclick = () => { drawer.hidden = true; };
 drawer.addEventListener("click", e => { if (e.target === drawer) drawer.hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { drawer.hidden = true; menu.hidden = true; } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { drawer.hidden = true; menu.hidden = true; modalInfo.hidden = true; } });
 
 function renderBag(){
   const ids = Object.keys(bag).filter(id => bag[id] > 0);
