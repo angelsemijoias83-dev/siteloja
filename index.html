@@ -24,6 +24,14 @@
   <symbol id="i-coracao" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
   <symbol id="i-sacola" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
   <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-brinco" viewBox="0 0 24 24"><circle cx="8" cy="13" r="3.5"/><circle cx="16" cy="13" r="3.5"/><path d="M8 17v2.5M16 17v2.5"/></symbol>
+  <symbol id="i-colar" viewBox="0 0 24 24"><path d="M4 5c2 8 14 8 16 0"/><path d="M12 13.5v1.5"/><circle cx="12" cy="17" r="2.5"/></symbol>
+  <symbol id="i-choker" viewBox="0 0 24 24"><path d="M3 10c5 2.5 13 2.5 18 0"/><path d="M3 14c5-2.5 13-2.5 18 0"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-pulseira" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-dasharray="1.2 2.4"/></symbol>
+  <symbol id="i-anel" viewBox="0 0 24 24"><circle cx="12" cy="14" r="6"/><path d="M9 8l3-4 3 4-3 2z"/></symbol>
+  <symbol id="i-conjunto" viewBox="0 0 24 24"><path d="M3 4c2 6 10 6 12 0"/><circle cx="9" cy="12" r="1.5"/><circle cx="18" cy="15" r="1.5"/><path d="M18 16.5v2"/></symbol>
+  <symbol id="i-lancamento" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/></symbol>
+  <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
 </svg>
 
 <div class="band">
@@ -81,7 +89,7 @@
   <div class="wrap">
     <div class="shop-head centro">
       <h2>Escolha a sua</h2>
-      <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+      <div class="cats" id="chips" role="group" aria-label="Filtrar por categoria"></div>
     </div>
     <div class="grid" id="grid"><p class="status">Carregando as peças…</p></div>
   </div>
@@ -145,7 +153,7 @@
 <script>
 const C = window.ANGEL;
 const db = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
-const cats = [["todas","Todas"],["brincos","Brincos"],["colares","Colares"],["aneis","Anéis"],["pulseiras","Pulseiras"],["conjuntos","Conjuntos"]];
+const cats = [["brincos","Brincos","i-brinco"],["colares","Colares","i-colar"],["chokers","Chokers","i-choker"],["pulseiras","Pulseiras","i-pulseira"],["aneis","Anéis","i-anel"],["conjuntos","Conjuntos","i-conjunto"],["lancamentos","Lançamentos","i-lancamento"],["mais-vendidos","Mais vendidos","i-estrela"]];
 const brl = v => Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $ = id => document.getElementById(id);
@@ -165,13 +173,17 @@ $("contatos").innerHTML =
 
 const chipsEl = $("chips"), gridEl = $("grid");
 function renderChips(){
-  chipsEl.innerHTML = [...cats, ["favoritos","♡ Favoritos"]].map(([k,l]) =>
-    `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===filtro}">${l}</button>`).join("");
+  chipsEl.innerHTML = cats.map(([k,l,ic]) =>
+    `<button type="button" class="cat" data-k="${k}" aria-pressed="${filtro===k}"><span class="cat-arte"><svg class="ic"><use href="#${ic}"/></svg></span><span class="cat-nome">${l}</span></button>`).join("");
 }
 function visiveis(){
   const q = busca.trim().toLowerCase();
-  return produtos.filter(p =>
-    (filtro==="todas" || (filtro==="favoritos" ? favs.has(p.id) : p.categoria===filtro)) &&
+  const combina = p => filtro==="todas" || ({
+    favoritos: () => favs.has(p.id),
+    lancamentos: () => p.destaque === "Novidade",
+    "mais-vendidos": () => p.destaque === "Mais vendido"
+  }[filtro] || (() => p.categoria === filtro))();
+  return produtos.filter(p => combina(p) &&
     (!q || `${p.nome} ${p.descricao||""} ${p.banho}`.toLowerCase().includes(q)));
 }
 function renderGrid(){
@@ -201,7 +213,7 @@ async function carregar(){
   produtos = data; renderGrid(); renderFavCount();
 }
 function irParaColecao(){ $("colecao").scrollIntoView({ behavior:"smooth" }); }
-chipsEl.addEventListener("click", e => { const b = e.target.closest(".chip"); if(!b) return; filtro = b.dataset.k; renderChips(); renderGrid(); });
+chipsEl.addEventListener("click", e => { const b = e.target.closest(".cat"); if(!b) return; filtro = filtro===b.dataset.k ? "todas" : b.dataset.k; renderChips(); renderGrid(); if (filtro!=="todas") irParaColecao(); });
 gridEl.addEventListener("click", e => {
   const f = e.target.closest(".fav");
   if (f) { const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id); salvarFavs(); renderFavCount(); renderGrid(); toast(favs.has(id) ? "Guardada nos favoritos" : "Tirada dos favoritos"); return; }
@@ -218,7 +230,7 @@ $("verFavoritos").onclick = () => { filtro = "favoritos"; renderChips(); renderG
 
 // menu
 const menu = $("menu");
-$("menuLista").innerHTML = cats.slice(1).map(([k,l]) => `<li><button type="button" data-cat="${k}">${l}</button></li>`).join("") +
+$("menuLista").innerHTML = cats.map(([k,l]) => `<li><button type="button" data-cat="${k}">${l}</button></li>`).join("") +
   `<li class="sep"></li><li><a href="#sobre">Sobre a Angel</a></li><li><a href="#cuidados">Como cuidar</a></li>` +
   `<li><a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a></li>` +
   `<li><a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">Instagram @${esc(C.INSTAGRAM)}</a></li>`;

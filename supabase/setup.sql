@@ -4,7 +4,7 @@
 create table if not exists produtos (
   id uuid primary key default gen_random_uuid(),
   nome text not null,
-  categoria text not null check (categoria in ('brincos','colares','aneis','pulseiras','conjuntos')),
+  categoria text not null check (categoria in ('brincos','colares','chokers','aneis','pulseiras','conjuntos')),
   descricao text,
   preco numeric(10,2) not null check (preco >= 0),
   banho text not null default 'Ouro 18k',

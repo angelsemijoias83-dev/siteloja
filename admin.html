@@ -75,7 +75,7 @@ textarea{min-height:120px;resize:vertical}
             <select id="categoria" required>
               <option value="brincos">Brincos</option><option value="colares">Colares</option>
               <option value="aneis">Anéis</option><option value="pulseiras">Pulseiras</option>
-              <option value="conjuntos">Conjuntos</option>
+              <option value="chokers">Chokers</option><option value="conjuntos">Conjuntos</option>
             </select></label>
           <label>Banho
             <select id="banho">
@@ -118,7 +118,7 @@ const db = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 const $ = id => document.getElementById(id);
 const brl = v => Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const NOMES = {brincos:"Brincos",colares:"Colares",aneis:"Anéis",pulseiras:"Pulseiras",conjuntos:"Conjuntos"};
+const NOMES = {brincos:"Brincos",colares:"Colares",chokers:"Chokers",aneis:"Anéis",pulseiras:"Pulseiras",conjuntos:"Conjuntos"};
 
 let foto = null;        // { blob, dataUrl } da foto nova, já reduzida
 let editando = null;    // produto em edição

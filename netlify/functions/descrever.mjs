@@ -31,6 +31,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANO
 const CATEGORIAS = {
   brincos: "brinco",
   colares: "colar",
+  chokers: "choker",
   aneis: "anel",
   pulseiras: "pulseira",
   conjuntos: "conjunto",
