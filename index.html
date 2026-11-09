@@ -125,7 +125,7 @@ const bag = {};
 document.getElementById("ano").textContent = new Date().getFullYear();
 document.getElementById("freteTxt").textContent = `frete grátis acima de ${brl(C.FRETE_GRATIS_ACIMA)}`;
 document.getElementById("contatos").innerHTML =
-  `<a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp</a> · ` +
+  `<a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a> · ` +
   `<a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">@${esc(C.INSTAGRAM)}</a>`;
 
 const chipsEl = document.getElementById("chips"), gridEl = document.getElementById("grid");
