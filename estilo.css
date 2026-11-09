@@ -43,25 +43,19 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
 .logo{display:block;width:clamp(170px,30vw,230px);aspect-ratio:463/104;background:var(--logo);-webkit-mask:var(--logo-img) center/contain no-repeat;mask:var(--logo-img) center/contain no-repeat}
 .logo.small{width:200px;background:var(--band-ink)}
-nav.links{display:flex;gap:24px;font-size:.9rem}
-nav.links a{color:var(--muted);text-decoration:none}
-nav.links a:hover{color:var(--ink)}
 .bag-btn{display:flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--ink);color:var(--ink);border-radius:999px;padding:8px 16px;font-size:.9rem}
 .bag-btn .count{background:var(--gold);color:var(--surface);border-radius:999px;min-width:22px;height:22px;display:inline-grid;place-items:center;font-size:.75rem;font-variant-numeric:tabular-nums}
-@media (max-width:720px){nav.links{display:none}}
 
 /* hero */
-.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:56px 40px}
+.hero .wrap{padding-block:64px 56px}
+.hero-texto{max-width:760px;margin:0 auto;text-align:center;display:grid;justify-items:center}
 .hero h1{font-size:clamp(2.1rem,5.2vw,3.5rem);margin-block:12px 18px;letter-spacing:-.01em}
 .hero h1 em{font-style:normal;color:var(--gold)}
-.hero p{color:var(--muted);max-width:46ch;margin:0 0 28px;font-weight:400;font-size:1.08rem}
+.hero p{color:var(--muted);max-width:52ch;margin:0 0 28px;font-weight:400;font-size:1.08rem}
 .cta{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-block;border-radius:999px;padding:12px 26px;border:1px solid var(--ink);background:var(--gold);border-color:var(--gold);color:var(--bg);text-decoration:none;font-size:.95rem;letter-spacing:.03em}
 .btn.ghost{background:transparent;color:var(--ink)}
-.hero-art{position:relative;aspect-ratio:1;max-width:100%;border-radius:50%;background:radial-gradient(circle at 50% 45%,var(--surface) 0 55%,var(--gold-soft) 100%);display:grid;place-items:center;border:1px solid var(--line)}
-.hero-art svg{width:78%;height:auto}
-.hallmark{position:absolute;right:6%;bottom:8%;background:var(--surface);border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:8px 14px;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase}
-@media (max-width:820px){.hero .wrap{grid-template-columns:1fr;padding-block:32px}.hero-art{max-width:360px;margin:0 auto;width:100%}}
+@media (max-width:820px){.hero .wrap{padding-block:40px 36px}}
 
 /* selos */
 .seals{border-block:1px solid var(--line);background:var(--surface)}
@@ -108,7 +102,9 @@ section.shop .wrap{padding-block:56px}
 @media (max-width:820px){.about .wrap{grid-template-columns:1fr;gap:32px}}
 
 footer{background:var(--band);color:var(--band-ink)}
-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-block:28px;font-size:.85rem}
+footer .wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-block:36px;font-size:.88rem}
+.links-rodape{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+footer small{opacity:.75;font-size:.78rem}
 footer a{color:var(--band-ink)}
 
 /* sacolinha */
@@ -138,3 +134,12 @@ textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:
 body{margin:0}
 img{max-width:100%}
 [hidden]{display:none!important}
+
+/* cabeçalho com o logo no centro (loja) */
+header.top.centro .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+header.top.centro .bag-btn{justify-self:end}
+@media (max-width:520px){
+  header.top.centro .logo{width:150px}
+  header.top.centro .bag-btn{padding:6px 10px;font-size:.8rem}
+}
+.hero .cta{justify-content:center}
