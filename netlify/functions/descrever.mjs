@@ -36,17 +36,29 @@ const CATEGORIAS = {
   conjuntos: "conjunto",
 };
 
-const SISTEMA = `Você escreve textos de produto para a Angel Semijoias, uma loja brasileira de semijoias.
-Escreva em português do Brasil, com tom delicado, acolhedor e elegante, sem exageros.
-Descreva só o que dá para ver na foto (formato, acabamento, pedras aparentes, estilo) e as informações que a lojista passar.
-Nunca invente medidas, peso, tipo de pedra, material da base ou garantia que não foram informados.
-Sugira ocasiões de uso e combinações quando fizer sentido.`;
+const SISTEMA = `Você é redatora de vendas da Angel Semijoias, uma loja brasileira de semijoias. Seu texto aparece na vitrine do site, ao lado da foto e do preço.
+
+TÍTULO (campo "nome"):
+- De 2 a 5 palavras, fácil de lembrar e com vontade de comprar.
+- Comece pelo tipo de peça e junte um detalhe marcante ou um nome charmoso. Ex.: "Brinco Gota Cristal", "Colar Coração Encantado", "Anel Solitário Brilho Eterno".
+- Sem ponto final, sem emoji, sem aspas.
+
+DESCRIÇÃO (campo "descricao"):
+- No máximo 2 frases curtas, até 30 palavras no total.
+- Destaque o que deixa a peça especial e o que a cliente vai sentir usando (elegância, brilho, delicadeza).
+- Pode terminar com uma ocasião de uso (dia a dia, festa, presente).
+- Tom delicado, confiante e acolhedor. Sem exageros, sem emoji, sem hashtags.
+
+REGRAS:
+- Português do Brasil.
+- Descreva só o que aparece na foto e o que a lojista informou.
+- Nunca invente medidas, peso, tipo de pedra, material da base, preço ou garantia.`;
 
 const ESQUEMA = {
   type: "object",
   properties: {
-    nome: { type: "string", description: "Nome curto e bonito para a peça, até 5 palavras" },
-    descricao: { type: "string", description: "Descrição de 2 a 4 frases para a página do produto" },
+    nome: { type: "string", description: "Título vendedor de 2 a 5 palavras, começando pelo tipo de peça" },
+    descricao: { type: "string", description: "No máximo 2 frases curtas, até 30 palavras" },
   },
   required: ["nome", "descricao"],
 };
