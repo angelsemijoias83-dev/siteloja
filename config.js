@@ -7,5 +7,5 @@ window.ANGEL = {
   TELEFONE: "(18) 98119-6386",      // como o número aparece no site
   INSTAGRAM: "angelsemijoia",
   FRETE_GRATIS_ACIMA: 199,
-  PARCELAS: 3,
+  PARCELAS: 6,
 };

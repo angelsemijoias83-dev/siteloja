@@ -8,27 +8,72 @@
 <link rel="icon" href="img/logo-mascara.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Pinyon+Script&display=swap">
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
-<div class="band"><div class="wrap">Banho de ouro 18k · Garantia de 1 ano no banho · Enviamos para todo o Brasil</div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-diamante" viewBox="0 0 24 24"><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M9 3l3 6 3-6M12 21 9 9m3 12 3-12"/></symbol>
+  <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-caixa" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></symbol>
+  <symbol id="i-cartao" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-caminhao" viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 9h4l4 4v3h-8"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-coracao" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+  <symbol id="i-sacola" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+</svg>
 
-<header class="top centro">
+<div class="band">
+  <div class="wrap band-itens">
+    <span><svg class="ic"><use href="#i-diamante"/></svg>Banho de ouro 18k</span>
+    <span><svg class="ic"><use href="#i-escudo"/></svg>Garantia de 6 meses</span>
+    <span><svg class="ic"><use href="#i-caixa"/></svg>Até <b class="nParcelas">6</b>x sem juros</span>
+    <span><svg class="ic"><use href="#i-caminhao"/></svg>Enviamos para todo o Brasil</span>
+  </div>
+</div>
+
+<header class="top cab">
   <div class="wrap">
-    <span aria-hidden="true"></span>
-    <a class="logo" href="#inicio" aria-label="Angel Semijoias, início"></a>
-    <button class="bag-btn" id="openBag" type="button">Sacolinha <span class="count" id="count">0</span></button>
+    <div class="cab-lado">
+      <button class="ic-btn" id="abrirMenu" type="button" aria-label="Abrir menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+      <button class="ic-btn" id="abrirBusca" type="button" aria-label="Buscar peças"><svg class="ic"><use href="#i-busca"/></svg></button>
+    </div>
+    <a class="marca" href="#inicio" aria-label="Angel Semijoias, início">
+      <svg class="marca-diamante" aria-hidden="true"><use href="#i-diamante"/></svg>
+      <span class="marca-nome">Angel Semijoias</span>
+      <svg class="marca-enfeite" viewBox="0 0 160 12" aria-hidden="true"><path d="M2 6h58M100 6h58M70 6c4-6 10-6 10 0s6 6 10 0M70 6c4 6 10 6 10 0s6-6 10 0"/></svg>
+    </a>
+    <div class="cab-lado direita">
+      <button class="ic-btn" id="verFavoritos" type="button" aria-label="Ver favoritos"><svg class="ic"><use href="#i-coracao"/></svg><span class="badge" id="countFav" hidden>0</span></button>
+      <button class="ic-btn" id="openBag" type="button" aria-label="Abrir sacolinha"><svg class="ic"><use href="#i-sacola"/></svg><span class="badge" id="count">0</span></button>
+    </div>
+  </div>
+  <div class="busca" id="busca" hidden>
+    <div class="wrap"><input id="campoBusca" type="search" placeholder="Buscar: argola, coração, colar…" aria-label="Buscar peças"></div>
   </div>
 </header>
 
-<section class="hero" id="inicio">
-  <div class="wrap">
+<section class="hero foto" id="inicio">
+  <div class="hero-grade">
     <div class="hero-texto">
-      <h1>Brilho de joia, <em>preço</em> de semijoia.</h1>
-      <p>Peças banhadas a ouro 18k e ródio, com zircônias selecionadas a dedo. Feitas para usar todo dia e para os dias que merecem mais.</p>
+      <h1>Brilho de joia,<br><em>preço de semijoia.</em></h1>
+      <div class="divisor" aria-hidden="true"><span></span><svg class="ic"><use href="#i-diamante"/></svg><span></span></div>
+      <p>Peças banhadas a ouro 18k e ródio, com zircônias selecionadas a dedo. Feitas para usar todo dia e para o dia que merece mais.</p>
+      <a class="btn-hero" href="#colecao">Conheça as Coleções <svg class="ic"><use href="#i-seta"/></svg></a>
     </div>
+    <div class="hero-foto"><img src="img/abertura.jpg" alt="Argolas cravejadas banhadas a ouro sobre porta-joias, com flores e fita de cetim" width="525" height="804"></div>
+  </div>
+</section>
+
+<section class="vantagens" aria-label="Vantagens">
+  <div class="wrap">
+    <div><svg class="ic"><use href="#i-diamante"/></svg><b>Qualidade Premium</b><small>Banho de ouro 18k</small></div>
+    <div><svg class="ic"><use href="#i-escudo"/></svg><b>Garantia<br>de 6 meses</b></div>
+    <div><svg class="ic"><use href="#i-cartao"/></svg><b>Até <span class="nParcelas">6</span>x<br>sem juros</b></div>
+    <div><svg class="ic"><use href="#i-caminhao"/></svg><b>Envio para<br>todo o Brasil</b></div>
   </div>
 </section>
 
@@ -65,7 +110,7 @@
 
 <footer>
   <div class="wrap">
-    <div class="logo small" role="img" aria-label="Angel Semijoias"></div>
+    <div class="marca-nome rodape">Angel Semijoias</div>
     <nav class="links-rodape" aria-label="Seções">
       <a href="#sobre">Sobre</a><a href="#cuidados">Cuidados</a>
     </nav>
@@ -73,6 +118,13 @@
     <small>© <span id="ano"></span> Angel Semijoias</small>
   </div>
 </footer>
+
+<div class="drawer esquerda" id="menu" hidden>
+  <nav class="panel" aria-label="Menu">
+    <div class="panel-head"><h2>Menu</h2><button class="x" id="fecharMenu" type="button" aria-label="Fechar">×</button></div>
+    <ul class="menu-lista" id="menuLista"></ul>
+  </nav>
+</div>
 
 <div class="drawer" id="drawer" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="bagTitle">
@@ -96,65 +148,114 @@ const db = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 const cats = [["todas","Todas"],["brincos","Brincos"],["colares","Colares"],["aneis","Anéis"],["pulseiras","Pulseiras"],["conjuntos","Conjuntos"]];
 const brl = v => Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let produtos = [], filtro = "todas";
+const $ = id => document.getElementById(id);
+let produtos = [], filtro = "todas", busca = "";
 const bag = {};
 
-document.getElementById("ano").textContent = new Date().getFullYear();
-document.getElementById("contatos").innerHTML =
+// favoritos ficam guardados no navegador da cliente
+let favs = new Set();
+try { favs = new Set(JSON.parse(localStorage.getItem("angel-favoritos") || "[]")); } catch {}
+function salvarFavs(){ try { localStorage.setItem("angel-favoritos", JSON.stringify([...favs])); } catch {} }
+
+document.querySelectorAll(".nParcelas").forEach(el => el.textContent = C.PARCELAS);
+$("ano").textContent = new Date().getFullYear();
+$("contatos").innerHTML =
   `<a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a> · ` +
   `<a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">@${esc(C.INSTAGRAM)}</a>`;
 
-const chipsEl = document.getElementById("chips"), gridEl = document.getElementById("grid");
+const chipsEl = $("chips"), gridEl = $("grid");
 function renderChips(){
-  chipsEl.innerHTML = cats.map(([k,l]) => `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===filtro}">${l}</button>`).join("");
+  chipsEl.innerHTML = [...cats, ["favoritos","♡ Favoritos"]].map(([k,l]) =>
+    `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===filtro}">${l}</button>`).join("");
+}
+function visiveis(){
+  const q = busca.trim().toLowerCase();
+  return produtos.filter(p =>
+    (filtro==="todas" || (filtro==="favoritos" ? favs.has(p.id) : p.categoria===filtro)) &&
+    (!q || `${p.nome} ${p.descricao||""} ${p.banho}`.toLowerCase().includes(q)));
 }
 function renderGrid(){
-  const lista = produtos.filter(p => filtro==="todas" || p.categoria===filtro);
-  if (!lista.length) { gridEl.innerHTML = `<p class="status">Nenhuma peça nesta categoria ainda. Volte em breve!</p>`; return; }
+  const lista = visiveis();
+  if (!lista.length) {
+    const msg = busca ? `Nenhuma peça encontrada para “${esc(busca)}”.`
+      : filtro==="favoritos" ? "Toque no coração das peças que você amar para guardar aqui."
+      : "Nenhuma peça nesta categoria ainda. Volte em breve!";
+    gridEl.innerHTML = `<p class="status">${msg}</p>`; return;
+  }
   gridEl.innerHTML = lista.map(p => `
     <article class="card">
       <div class="thumb">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
+        <button type="button" class="fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}" aria-label="Favoritar ${esc(p.nome)}"><svg class="ic"><use href="#i-coracao"/></svg></button>
         <img src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy"></div>
       <h3>${esc(p.nome)}</h3>
       <div class="meta">${esc(p.banho)}</div>
       ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
-      <div class="price-row"><div class="price">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)}</small></div>
+      <div class="price-row"><div class="price">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
       <button type="button" class="add" data-id="${p.id}">Adicionar</button></div>
     </article>`).join("");
 }
+function renderFavCount(){ const n = [...favs].filter(id => produtos.some(p => p.id===id)).length; $("countFav").textContent = n; $("countFav").hidden = n===0; }
 async function carregar(){
   const { data, error } = await db.from("produtos").select("*").eq("ativo", true).order("criado_em", { ascending:false });
   if (error) { gridEl.innerHTML = `<p class="status">Não foi possível carregar as peças agora. Atualize a página.</p>`; console.error(error); return; }
-  produtos = data; renderGrid();
+  produtos = data; renderGrid(); renderFavCount();
 }
+function irParaColecao(){ $("colecao").scrollIntoView({ behavior:"smooth" }); }
 chipsEl.addEventListener("click", e => { const b = e.target.closest(".chip"); if(!b) return; filtro = b.dataset.k; renderChips(); renderGrid(); });
-gridEl.addEventListener("click", e => { const b = e.target.closest(".add"); if(!b) return; bag[b.dataset.id] = (bag[b.dataset.id]||0)+1; renderBag(); toast("Adicionado à sacolinha"); });
+gridEl.addEventListener("click", e => {
+  const f = e.target.closest(".fav");
+  if (f) { const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id); salvarFavs(); renderFavCount(); renderGrid(); toast(favs.has(id) ? "Guardada nos favoritos" : "Tirada dos favoritos"); return; }
+  const b = e.target.closest(".add"); if(!b) return; bag[b.dataset.id] = (bag[b.dataset.id]||0)+1; renderBag(); toast("Adicionado à sacolinha");
+});
 
-const drawer = document.getElementById("drawer");
-document.getElementById("openBag").onclick = () => { drawer.hidden = false; };
-document.getElementById("closeBag").onclick = () => { drawer.hidden = true; };
+// busca
+$("abrirBusca").onclick = () => { const el = $("busca"); el.hidden = !el.hidden; if (!el.hidden) $("campoBusca").focus(); };
+$("campoBusca").addEventListener("input", e => { busca = e.target.value; renderGrid(); });
+$("campoBusca").addEventListener("keydown", e => { if (e.key === "Enter") irParaColecao(); });
+
+// favoritos
+$("verFavoritos").onclick = () => { filtro = "favoritos"; renderChips(); renderGrid(); irParaColecao(); };
+
+// menu
+const menu = $("menu");
+$("menuLista").innerHTML = cats.slice(1).map(([k,l]) => `<li><button type="button" data-cat="${k}">${l}</button></li>`).join("") +
+  `<li class="sep"></li><li><a href="#sobre">Sobre a Angel</a></li><li><a href="#cuidados">Como cuidar</a></li>` +
+  `<li><a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a></li>` +
+  `<li><a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">Instagram @${esc(C.INSTAGRAM)}</a></li>`;
+$("abrirMenu").onclick = () => { menu.hidden = false; };
+$("fecharMenu").onclick = () => { menu.hidden = true; };
+menu.addEventListener("click", e => {
+  if (e.target === menu) { menu.hidden = true; return; }
+  const c = e.target.closest("[data-cat]"); if (c) { filtro = c.dataset.cat; renderChips(); renderGrid(); menu.hidden = true; irParaColecao(); return; }
+  if (e.target.closest("a")) menu.hidden = true;
+});
+
+// sacolinha
+const drawer = $("drawer");
+$("openBag").onclick = () => { drawer.hidden = false; };
+$("closeBag").onclick = () => { drawer.hidden = true; };
 drawer.addEventListener("click", e => { if (e.target === drawer) drawer.hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") drawer.hidden = true; });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { drawer.hidden = true; menu.hidden = true; } });
 
 function renderBag(){
   const ids = Object.keys(bag).filter(id => bag[id] > 0);
   const n = ids.reduce((s,id) => s + bag[id], 0);
-  document.getElementById("count").textContent = n;
-  document.getElementById("empty").hidden = n > 0;
-  document.getElementById("checkout").hidden = n === 0;
+  $("count").textContent = n;
+  $("empty").hidden = n > 0;
+  $("checkout").hidden = n === 0;
   let total = 0; const linhas = [];
-  document.getElementById("items").innerHTML = ids.map(id => {
+  $("items").innerHTML = ids.map(id => {
     const p = produtos.find(x => x.id === id), q = bag[id]; total += p.preco*q;
     linhas.push(`• ${q}x ${p.nome} (${p.banho}) — ${brl(p.preco*q)}`);
     return `<li><div><b style="font-weight:500">${esc(p.nome)}</b><div class="meta">${esc(p.banho)} · ${brl(p.preco)}</div></div>
       <div class="qty"><button type="button" data-d="-1" data-id="${id}" aria-label="Diminuir">−</button><span>${q}</span><button type="button" data-d="1" data-id="${id}" aria-label="Aumentar">+</button></div></li>`;
   }).join("");
-  document.getElementById("total").textContent = brl(total);
+  $("total").textContent = brl(total);
   const msg = `Olá, Angel! Quero fazer este pedido:\n${linhas.join("\n")}\nTotal: ${brl(total)}\n\nMeu nome:\nMeu CEP:`;
-  document.getElementById("sendWpp").href = `https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent(msg)}`;
+  $("sendWpp").href = `https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent(msg)}`;
 }
-document.getElementById("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; bag[b.dataset.id] = Math.max(0, bag[b.dataset.id] + Number(b.dataset.d)); renderBag(); });
-let tt; function toast(m){ const el = document.getElementById("toast"); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(() => el.hidden = true, 1800); }
+$("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; bag[b.dataset.id] = Math.max(0, bag[b.dataset.id] + Number(b.dataset.d)); renderBag(); });
+let tt; function toast(m){ const el = $("toast"); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(() => el.hidden = true, 1800); }
 
 renderChips(); renderBag(); carregar();
 </script>
