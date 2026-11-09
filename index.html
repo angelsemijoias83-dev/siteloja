@@ -26,30 +26,16 @@
 <section class="hero" id="inicio">
   <div class="wrap">
     <div class="hero-texto">
-      <div class="eyebrow">Nova coleção</div>
       <h1>Brilho de joia, <em>preço</em> de semijoia.</h1>
       <p>Peças banhadas a ouro 18k e ródio, com zircônias selecionadas a dedo. Feitas para usar todo dia e para os dias que merecem mais.</p>
-      <div class="cta">
-        <a class="btn" href="#colecao">Ver coleção</a>
-        <a class="btn ghost" href="#sobre">Conheça a Angel</a>
-      </div>
     </div>
   </div>
 </section>
 
-<div class="seals">
-  <div class="wrap">
-    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z"/></svg><div><b>Garantia de 1 ano</b><small>no banho de todas as peças</small></div></div>
-    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M8 12l3 3 5-6"/></svg><div><b>Antialérgicas</b><small>sem níquel, base de latão</small></div></div>
-    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg><div><b>Envio para todo o Brasil</b><small id="freteTxt">frete grátis acima de R$ 199</small></div></div>
-    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16M12 9v11M12 9c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"/></svg><div><b>Embalagem presente</b><small>caixinha com laço, sem custo</small></div></div>
-  </div>
-</div>
-
 <section class="shop" id="colecao">
   <div class="wrap">
-    <div class="shop-head">
-      <div><div class="eyebrow">Coleção</div><h2>Escolha a sua</h2></div>
+    <div class="shop-head centro">
+      <h2>Escolha a sua</h2>
       <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
     </div>
     <div class="grid" id="grid"><p class="status">Carregando as peças…</p></div>
@@ -114,7 +100,6 @@ let produtos = [], filtro = "todas";
 const bag = {};
 
 document.getElementById("ano").textContent = new Date().getFullYear();
-document.getElementById("freteTxt").textContent = `frete grátis acima de ${brl(C.FRETE_GRATIS_ACIMA)}`;
 document.getElementById("contatos").innerHTML =
   `<a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a> · ` +
   `<a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">@${esc(C.INSTAGRAM)}</a>`;
