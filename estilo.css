@@ -289,3 +289,18 @@ header.cab .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:cen
 .links-rodape button{background:none;border:0;color:var(--band-ink);font:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:0}
 .menu-lista button{display:block;width:100%;text-align:left;padding:14px 4px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:inherit;font-size:1.05rem}
 .destaque-frase{font-style:italic;color:var(--caramel);font-size:1.15em}
+
+/* rodapé mais delicado */
+footer{background:var(--hero-bg);color:var(--ink);border-top:1px solid var(--line)}
+footer .wrap{padding-block:44px 28px;gap:18px}
+.marca-nome.rodape{background:var(--logo);width:240px}
+footer .divisor{margin:0}
+footer .divisor span{width:70px}
+.links-rodape{gap:28px}
+.links-rodape button{color:var(--caramel);text-decoration:none;font-style:italic;font-size:1.02rem}
+.links-rodape button:hover{text-decoration:underline}
+#contatos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.contato{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);text-decoration:none;font-size:.9rem}
+.contato:hover{border-color:var(--caramel)}
+.contato .ic{width:18px;height:18px;color:var(--caramel)}
+footer small{color:var(--muted);opacity:1;font-size:.78rem}

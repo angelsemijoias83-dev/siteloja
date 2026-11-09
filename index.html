@@ -23,6 +23,8 @@
   <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
   <symbol id="i-coracao" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
   <symbol id="i-sacola" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-whats" viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-1.5-1-2-2l1-1-1-2z"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="16.8" cy="7.2" r=".6"/></symbol>
   <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
   <symbol id="i-brinco" viewBox="0 0 24 24"><circle cx="8" cy="13" r="3.5"/><circle cx="16" cy="13" r="3.5"/><path d="M8 17v2.5M16 17v2.5"/></symbol>
   <symbol id="i-colar" viewBox="0 0 24 24"><path d="M4 5c2 8 14 8 16 0"/><path d="M12 13.5v1.5"/><circle cx="12" cy="17" r="2.5"/></symbol>
@@ -100,6 +102,7 @@
 <footer>
   <div class="wrap">
     <div class="marca-nome rodape">Angel Semijoias</div>
+    <div class="divisor" aria-hidden="true"><span></span><svg class="ic"><use href="#i-diamante"/></svg><span></span></div>
     <nav class="links-rodape" aria-label="Informações">
       <button type="button" data-info="sobre">Sobre a Angel</button><button type="button" data-info="cuidados">Como cuidar</button>
     </nav>
@@ -174,8 +177,8 @@ function salvarFavs(){ try { localStorage.setItem("angel-favoritos", JSON.string
 document.querySelectorAll(".nParcelas").forEach(el => el.textContent = C.PARCELAS);
 $("ano").textContent = new Date().getFullYear();
 $("contatos").innerHTML =
-  `<a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp ${esc(C.TELEFONE)}</a> · ` +
-  `<a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">@${esc(C.INSTAGRAM)}</a>`;
+  `<a class="contato" href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whats"/></svg>${esc(C.TELEFONE)}</a>` +
+  `<a class="contato" href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-insta"/></svg>@${esc(C.INSTAGRAM)}</a>`;
 
 const chipsEl = $("chips"), gridEl = $("grid");
 function renderChips(){
