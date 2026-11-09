@@ -288,3 +288,4 @@ header.cab .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:cen
 .panel.modal h2{font-size:var(--step-2);margin:10px 0 14px}
 .links-rodape button{background:none;border:0;color:var(--band-ink);font:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:0}
 .menu-lista button{display:block;width:100%;text-align:left;padding:14px 4px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:inherit;font-size:1.05rem}
+.destaque-frase{font-style:italic;color:var(--caramel);font-size:1.15em}
