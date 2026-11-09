@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Painel Angel Semijoias</title>
+<link rel="icon" href="img/logo-mascara.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<style>
+main.wrap{padding-block:32px 64px;display:grid;gap:32px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:24px;display:grid;gap:16px;min-width:0}
+.box h2{font-size:var(--step-2)}
+.login{max-width:420px;margin:48px auto}
+label{display:grid;gap:6px;font-size:.88rem;font-weight:500}
+input,select,textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;width:100%}
+textarea{min-height:120px;resize:vertical}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:700px){.row{grid-template-columns:1fr}}
+.cadastro{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+@media (max-width:760px){.cadastro{grid-template-columns:1fr}}
+.foto{aspect-ratio:4/5;max-width:100%;border:1px dashed var(--gold);border-radius:6px;display:grid;place-items:center;text-align:center;color:var(--muted);background:var(--bg);overflow:hidden;cursor:pointer;position:relative}
+.foto img{width:100%;height:100%;object-fit:cover}
+.foto input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.campos{display:grid;gap:16px;min-width:0}
+.acoes{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn[disabled]{opacity:.5;cursor:wait}
+.ia{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold)}
+.msg{font-size:.88rem;color:var(--muted);margin:0}
+.msg.erro{color:#B3261E}
+.lista{display:grid;gap:12px}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px}
+.item img{width:64px;height:80px;object-fit:cover;border-radius:4px}
+.item.oculto{opacity:.5}
+.item .botoes{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.mini{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 12px;font-size:.8rem}
+.mini.perigo{border-color:#B3261E;color:#B3261E}
+@media (max-width:520px){.item{grid-template-columns:56px 1fr}.item .botoes{grid-column:1/-1;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Ver a loja"></a>
+    <span class="eyebrow">Painel</span>
+    <button class="bag-btn" id="sair" type="button" hidden>Sair</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Login -->
+  <form class="box login" id="formLogin">
+    <h2>Entrar no painel</h2>
+    <label>E-mail<input id="email" type="email" autocomplete="username" required></label>
+    <label>Senha<input id="senha" type="password" autocomplete="current-password" required></label>
+    <button class="btn" type="submit">Entrar</button>
+    <p class="msg" id="msgLogin"></p>
+  </form>
+
+  <!-- Cadastro -->
+  <section class="box" id="areaCadastro" hidden>
+    <h2 id="tituloForm">Nova peça</h2>
+    <form class="cadastro" id="formPeca">
+      <label class="foto" id="caixaFoto">
+        <span id="textoFoto">Toque para escolher<br>ou tirar a foto</span>
+        <img id="previa" alt="" hidden>
+        <input id="arquivo" type="file" accept="image/*">
+      </label>
+      <div class="campos">
+        <div class="row">
+          <label>Categoria
+            <select id="categoria" required>
+              <option value="brincos">Brincos</option><option value="colares">Colares</option>
+              <option value="aneis">Anéis</option><option value="pulseiras">Pulseiras</option>
+              <option value="conjuntos">Conjuntos</option>
+            </select></label>
+          <label>Banho
+            <select id="banho">
+              <option>Ouro 18k</option><option>Ródio branco</option><option>Ouro rosé</option><option>Ródio negro</option>
+            </select></label>
+          <label>Preço (R$)<input id="preco" type="number" min="0" step="0.01" inputmode="decimal" required></label>
+        </div>
+        <label>Detalhes para a IA (opcional)<input id="observacoes" placeholder="Ex.: zircônia cristal, fecho lagosta, 45 cm"></label>
+        <div class="acoes">
+          <button class="btn ia" type="button" id="gerar">✦ Gerar nome e descrição com IA</button>
+          <span class="msg" id="msgIa"></span>
+        </div>
+        <label>Nome da peça<input id="nome" required></label>
+        <label>Descrição<textarea id="descricao"></textarea></label>
+        <label>Selo (opcional)<input id="destaque" placeholder="Novidade, Mais vendido, Presente…"></label>
+        <div class="acoes">
+          <button class="btn" type="submit" id="salvar">Salvar peça</button>
+          <button class="btn ghost" type="button" id="cancelar" hidden>Cancelar edição</button>
+          <span class="msg" id="msgSalvar"></span>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- Lista -->
+  <section class="box" id="areaLista" hidden>
+    <div class="shop-head" style="margin:0">
+      <h2>Peças cadastradas</h2>
+      <div class="chips" id="filtros"></div>
+    </div>
+    <div class="lista" id="lista"></div>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const C = window.ANGEL;
+const db = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
+const brl = v => Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const NOMES = {brincos:"Brincos",colares:"Colares",aneis:"Anéis",pulseiras:"Pulseiras",conjuntos:"Conjuntos"};
+
+let foto = null;        // { blob, dataUrl } da foto nova, já reduzida
+let editando = null;    // produto em edição
+let produtos = [], filtro = "todas", confirmarApagar = null;
+
+function msg(id, texto, erro=false){ $(id).textContent = texto; $(id).classList.toggle("erro", erro); }
+
+// ---------- Login ----------
+async function mostrarPainel(logado){
+  $("formLogin").hidden = logado;
+  $("areaCadastro").hidden = $("areaLista").hidden = $("sair").hidden = !logado;
+  if (logado) carregar();
+}
+db.auth.getSession().then(({data}) => mostrarPainel(!!data.session));
+$("formLogin").addEventListener("submit", async e => {
+  e.preventDefault(); msg("msgLogin","Entrando…");
+  const { error } = await db.auth.signInWithPassword({ email: $("email").value, password: $("senha").value });
+  if (error) return msg("msgLogin","E-mail ou senha incorretos.", true);
+  msg("msgLogin",""); mostrarPainel(true);
+});
+$("sair").onclick = async () => { await db.auth.signOut(); mostrarPainel(false); };
+
+// ---------- Foto: reduz para no máximo 1400px antes de enviar ----------
+$("arquivo").addEventListener("change", async () => {
+  const f = $("arquivo").files[0]; if (!f) return;
+  const img = await createImageBitmap(f);
+  const escala = Math.min(1, 1400 / Math.max(img.width, img.height));
+  const cv = document.createElement("canvas");
+  cv.width = Math.round(img.width*escala); cv.height = Math.round(img.height*escala);
+  cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+  const dataUrl = cv.toDataURL("image/jpeg", 0.85);
+  const blob = await (await fetch(dataUrl)).blob();
+  foto = { blob, dataUrl };
+  $("previa").src = dataUrl; $("previa").hidden = false; $("textoFoto").hidden = true;
+});
+
+// ---------- IA ----------
+async function fotoParaIa(){
+  if (foto) return foto.dataUrl;
+  if (editando) { // usa a foto já salva
+    const blob = await (await fetch(editando.foto_url)).blob();
+    return await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); });
+  }
+  return null;
+}
+$("gerar").addEventListener("click", async () => {
+  const imagem = await fotoParaIa();
+  if (!imagem) return msg("msgIa","Escolha a foto primeiro.", true);
+  $("gerar").disabled = true; msg("msgIa","Escrevendo…");
+  try {
+    const { data } = await db.auth.getSession();
+    const r = await fetch("/api/descrever", {
+      method: "POST",
+      headers: { "Content-Type":"application/json", Authorization: `Bearer ${data.session?.access_token}` },
+      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value, observacoes: $("observacoes").value }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.erro || "Erro ao gerar.");
+    $("nome").value = j.nome; $("descricao").value = j.descricao;
+    msg("msgIa","Pronto! Revise e ajuste se quiser.");
+  } catch (err) { msg("msgIa", err.message, true); }
+  finally { $("gerar").disabled = false; }
+});
+
+// ---------- Salvar ----------
+$("formPeca").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!foto && !editando) return msg("msgSalvar","Escolha a foto da peça.", true);
+  $("salvar").disabled = true; msg("msgSalvar","Salvando…");
+  try {
+    const dados = {
+      nome: $("nome").value.trim(), categoria: $("categoria").value, banho: $("banho").value,
+      preco: Number($("preco").value), descricao: $("descricao").value.trim() || null,
+      destaque: $("destaque").value.trim() || null,
+    };
+    if (foto) {
+      const caminho = `${dados.categoria}/${crypto.randomUUID()}.jpg`;
+      const up = await db.storage.from("fotos").upload(caminho, foto.blob, { contentType:"image/jpeg" });
+      if (up.error) throw up.error;
+      dados.foto_caminho = caminho;
+      dados.foto_url = db.storage.from("fotos").getPublicUrl(caminho).data.publicUrl;
+    }
+    const q = editando ? db.from("produtos").update(dados).eq("id", editando.id) : db.from("produtos").insert(dados);
+    const { error } = await q; if (error) throw error;
+    if (foto && editando) await db.storage.from("fotos").remove([editando.foto_caminho]);
+    limpar(); msg("msgSalvar","Peça salva! Já aparece na loja."); carregar();
+  } catch (err) { console.error(err); msg("msgSalvar","Não foi possível salvar: " + err.message, true); }
+  finally { $("salvar").disabled = false; }
+});
+
+function limpar(){
+  $("formPeca").reset(); foto = null; editando = null;
+  $("previa").hidden = true; $("previa").removeAttribute("src"); $("textoFoto").hidden = false;
+  $("tituloForm").textContent = "Nova peça"; $("cancelar").hidden = true; msg("msgIa","");
+}
+$("cancelar").onclick = () => { limpar(); msg("msgSalvar",""); };
+
+// ---------- Lista ----------
+async function carregar(){
+  const { data, error } = await db.from("produtos").select("*").order("criado_em",{ascending:false});
+  if (error) { $("lista").innerHTML = `<p class="msg erro">Não foi possível carregar as peças.</p>`; return; }
+  produtos = data; desenhar();
+}
+function desenhar(){
+  const cont = k => produtos.filter(p => k==="todas" || p.categoria===k).length;
+  $("filtros").innerHTML = [["todas","Todas"], ...Object.entries(NOMES)].map(([k,l]) =>
+    `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===filtro}">${l} (${cont(k)})</button>`).join("");
+  const lista = produtos.filter(p => filtro==="todas" || p.categoria===filtro);
+  $("lista").innerHTML = lista.length ? lista.map(p => `
+    <div class="item ${p.ativo ? "" : "oculto"}">
+      <img src="${esc(p.foto_url)}" alt="">
+      <div><b style="font-weight:500">${esc(p.nome)}</b>
+        <div class="meta">${NOMES[p.categoria]} · ${esc(p.banho)} · ${brl(p.preco)}${p.ativo ? "" : " · escondida"}</div></div>
+      <div class="botoes">
+        <button class="mini" data-acao="editar" data-id="${p.id}">Editar</button>
+        <button class="mini" data-acao="ativo" data-id="${p.id}">${p.ativo ? "Esconder" : "Mostrar"}</button>
+        <button class="mini perigo" data-acao="apagar" data-id="${p.id}">${confirmarApagar===p.id ? "Confirmar?" : "Apagar"}</button>
+      </div>
+    </div>`).join("") : `<p class="msg">Nenhuma peça nesta categoria ainda. Cadastre a primeira acima.</p>`;
+}
+$("filtros").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; filtro = b.dataset.k; desenhar(); });
+$("lista").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-acao]"); if (!b) return;
+  const p = produtos.find(x => x.id === b.dataset.id);
+  if (b.dataset.acao === "editar") {
+    limpar(); editando = p;
+    $("categoria").value = p.categoria; $("banho").value = p.banho; $("preco").value = p.preco;
+    $("nome").value = p.nome; $("descricao").value = p.descricao || ""; $("destaque").value = p.destaque || "";
+    $("previa").src = p.foto_url; $("previa").hidden = false; $("textoFoto").hidden = true;
+    $("tituloForm").textContent = "Editar peça"; $("cancelar").hidden = false;
+    $("areaCadastro").scrollIntoView({behavior:"smooth"});
+  }
+  if (b.dataset.acao === "ativo") {
+    await db.from("produtos").update({ ativo: !p.ativo }).eq("id", p.id); carregar();
+  }
+  if (b.dataset.acao === "apagar") {
+    if (confirmarApagar !== p.id) { confirmarApagar = p.id; desenhar(); return; }
+    confirmarApagar = null;
+    await db.from("produtos").delete().eq("id", p.id);
+    await db.storage.from("fotos").remove([p.foto_caminho]);
+    carregar();
+  }
+});
+</script>
+</body>
+</html>

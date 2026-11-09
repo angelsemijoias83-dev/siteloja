@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Angel Semijoias</title>
+<meta name="description" content="Semijoias banhadas a ouro 18k e ródio, com garantia e envio para todo o Brasil.">
+<link rel="icon" href="img/logo-mascara.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<div class="band"><div class="wrap">Banho de ouro 18k · Garantia de 1 ano no banho · Enviamos para todo o Brasil</div></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#inicio" aria-label="Angel Semijoias, início"></a>
+    <nav class="links" aria-label="Seções">
+      <a href="#colecao">Coleção</a><a href="#sobre">Sobre</a><a href="#cuidados">Cuidados</a>
+    </nav>
+    <button class="bag-btn" id="openBag" type="button">Sacolinha <span class="count" id="count">0</span></button>
+  </div>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Nova coleção</div>
+      <h1>Brilho de joia, <em>preço</em> de semijoia.</h1>
+      <p>Peças banhadas a ouro 18k e ródio, com zircônias selecionadas a dedo. Feitas para usar todo dia e para os dias que merecem mais.</p>
+      <div class="cta">
+        <a class="btn" href="#colecao">Ver coleção</a>
+        <a class="btn ghost" href="#sobre">Conheça a Angel</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 200 200"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1DCA0"/><stop offset=".5" stop-color="#C49A45"/><stop offset="1" stop-color="#8A6527"/></linearGradient></defs>
+        <path d="M30 40 Q100 150 170 40" fill="none" stroke="url(#hg)" stroke-width="3"/>
+        <circle cx="100" cy="104" r="3" fill="url(#hg)"/>
+        <path d="M100 107 L100 118" stroke="url(#hg)" stroke-width="2"/>
+        <path d="M100 118 C84 104 74 124 100 148 C126 124 116 104 100 118Z" fill="url(#hg)"/>
+        <circle cx="100" cy="128" r="6" fill="#FFFFFF" opacity=".85"/>
+      </svg>
+      <div class="hallmark">Ouro 18k</div>
+    </div>
+  </div>
+</section>
+
+<div class="seals">
+  <div class="wrap">
+    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z"/></svg><div><b>Garantia de 1 ano</b><small>no banho de todas as peças</small></div></div>
+    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M8 12l3 3 5-6"/></svg><div><b>Antialérgicas</b><small>sem níquel, base de latão</small></div></div>
+    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg><div><b>Envio para todo o Brasil</b><small id="freteTxt">frete grátis acima de R$ 199</small></div></div>
+    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16M12 9v11M12 9c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"/></svg><div><b>Embalagem presente</b><small>caixinha com laço, sem custo</small></div></div>
+  </div>
+</div>
+
+<section class="shop" id="colecao">
+  <div class="wrap">
+    <div class="shop-head">
+      <div><div class="eyebrow">Coleção</div><h2>Escolha a sua</h2></div>
+      <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+    </div>
+    <div class="grid" id="grid"><p class="status">Carregando as peças…</p></div>
+  </div>
+</section>
+
+<section class="about" id="sobre">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Sobre a Angel</div>
+      <h2>Semijoias escolhidas com carinho, peça por peça.</h2>
+      <p>A Angel Semijoias nasceu da vontade de oferecer peças bonitas, duráveis e acessíveis. Cada modelo passa pela nossa curadoria antes de chegar até você.</p>
+      <p>Atendimento direto pelo WhatsApp, do jeito que você gosta: rápido, próximo e com dicas para combinar as peças.</p>
+    </div>
+    <div id="cuidados">
+      <div class="eyebrow">Como cuidar</div>
+      <h2>Para o brilho durar</h2>
+      <ul class="care">
+        <li><span>i</span><div>Evite contato com perfume, cremes e álcool. Coloque as peças por último.</div></li>
+        <li><span>ii</span><div>Tire antes do banho, da piscina e do mar.</div></li>
+        <li><span>iii</span><div>Limpe com flanela seca e macia depois de usar.</div></li>
+        <li><span>iv</span><div>Guarde separadas, em saquinho fechado, longe da umidade.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><div class="logo small" role="img" aria-label="Angel Semijoias"></div>
+      <span id="contatos"></span></div>
+    <div>© <span id="ano"></span> Angel Semijoias</div>
+  </div>
+</footer>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="bagTitle">
+    <div class="panel-head"><h2 id="bagTitle">Sua sacolinha</h2><button class="x" id="closeBag" type="button" aria-label="Fechar">×</button></div>
+    <ul class="items" id="items"></ul>
+    <p class="empty" id="empty">Sua sacolinha está vazia. Escolha uma peça na coleção.</p>
+    <div id="checkout" hidden>
+      <div class="total"><span>Total</span><b id="total">R$ 0,00</b></div>
+      <p class="note">Ao continuar, o WhatsApp abre com o seu pedido pronto. É só enviar.</p>
+      <div class="cta"><a class="btn" id="sendWpp" href="#" target="_blank" rel="noopener">Enviar pedido no WhatsApp</a></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const C = window.ANGEL;
+const db = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+const cats = [["todas","Todas"],["brincos","Brincos"],["colares","Colares"],["aneis","Anéis"],["pulseiras","Pulseiras"],["conjuntos","Conjuntos"]];
+const brl = v => Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let produtos = [], filtro = "todas";
+const bag = {};
+
+document.getElementById("ano").textContent = new Date().getFullYear();
+document.getElementById("freteTxt").textContent = `frete grátis acima de ${brl(C.FRETE_GRATIS_ACIMA)}`;
+document.getElementById("contatos").innerHTML =
+  `<a href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener">WhatsApp</a> · ` +
+  `<a href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">@${esc(C.INSTAGRAM)}</a>`;
+
+const chipsEl = document.getElementById("chips"), gridEl = document.getElementById("grid");
+function renderChips(){
+  chipsEl.innerHTML = cats.map(([k,l]) => `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===filtro}">${l}</button>`).join("");
+}
+function renderGrid(){
+  const lista = produtos.filter(p => filtro==="todas" || p.categoria===filtro);
+  if (!lista.length) { gridEl.innerHTML = `<p class="status">Nenhuma peça nesta categoria ainda. Volte em breve!</p>`; return; }
+  gridEl.innerHTML = lista.map(p => `
+    <article class="card">
+      <div class="thumb">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
+        <img src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy"></div>
+      <h3>${esc(p.nome)}</h3>
+      <div class="meta">${esc(p.banho)}</div>
+      ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
+      <div class="price-row"><div class="price">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)}</small></div>
+      <button type="button" class="add" data-id="${p.id}">Adicionar</button></div>
+    </article>`).join("");
+}
+async function carregar(){
+  const { data, error } = await db.from("produtos").select("*").eq("ativo", true).order("criado_em", { ascending:false });
+  if (error) { gridEl.innerHTML = `<p class="status">Não foi possível carregar as peças agora. Atualize a página.</p>`; console.error(error); return; }
+  produtos = data; renderGrid();
+}
+chipsEl.addEventListener("click", e => { const b = e.target.closest(".chip"); if(!b) return; filtro = b.dataset.k; renderChips(); renderGrid(); });
+gridEl.addEventListener("click", e => { const b = e.target.closest(".add"); if(!b) return; bag[b.dataset.id] = (bag[b.dataset.id]||0)+1; renderBag(); toast("Adicionado à sacolinha"); });
+
+const drawer = document.getElementById("drawer");
+document.getElementById("openBag").onclick = () => { drawer.hidden = false; };
+document.getElementById("closeBag").onclick = () => { drawer.hidden = true; };
+drawer.addEventListener("click", e => { if (e.target === drawer) drawer.hidden = true; });
+document.addEventListener("keydown", e => { if (e.key === "Escape") drawer.hidden = true; });
+
+function renderBag(){
+  const ids = Object.keys(bag).filter(id => bag[id] > 0);
+  const n = ids.reduce((s,id) => s + bag[id], 0);
+  document.getElementById("count").textContent = n;
+  document.getElementById("empty").hidden = n > 0;
+  document.getElementById("checkout").hidden = n === 0;
+  let total = 0; const linhas = [];
+  document.getElementById("items").innerHTML = ids.map(id => {
+    const p = produtos.find(x => x.id === id), q = bag[id]; total += p.preco*q;
+    linhas.push(`• ${q}x ${p.nome} (${p.banho}) — ${brl(p.preco*q)}`);
+    return `<li><div><b style="font-weight:500">${esc(p.nome)}</b><div class="meta">${esc(p.banho)} · ${brl(p.preco)}</div></div>
+      <div class="qty"><button type="button" data-d="-1" data-id="${id}" aria-label="Diminuir">−</button><span>${q}</span><button type="button" data-d="1" data-id="${id}" aria-label="Aumentar">+</button></div></li>`;
+  }).join("");
+  document.getElementById("total").textContent = brl(total);
+  const msg = `Olá, Angel! Quero fazer este pedido:\n${linhas.join("\n")}\nTotal: ${brl(total)}\n\nMeu nome:\nMeu CEP:`;
+  document.getElementById("sendWpp").href = `https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent(msg)}`;
+}
+document.getElementById("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; bag[b.dataset.id] = Math.max(0, bag[b.dataset.id] + Number(b.dataset.d)); renderBag(); });
+let tt; function toast(m){ const el = document.getElementById("toast"); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(() => el.hidden = true, 1800); }
+
+renderChips(); renderBag(); carregar();
+</script>
+</body>
+</html>
