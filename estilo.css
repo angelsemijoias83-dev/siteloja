@@ -304,3 +304,17 @@ footer .divisor span{width:70px}
 .contato:hover{border-color:var(--caramel)}
 .contato .ic{width:18px;height:18px;color:var(--caramel)}
 footer small{color:var(--muted);opacity:1;font-size:.78rem}
+
+/* duas fotos por peça: original e foto da IA */
+.thumb.duas img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:pointer}
+.thumb .img-2{opacity:0;transition:opacity .35s ease}
+.thumb.ver-2 .img-2{opacity:1}
+.thumb .selo-ia{position:absolute;left:8px;bottom:8px;z-index:1;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--muted);font-size:.66rem;border-radius:999px;padding:2px 9px;opacity:0;transition:opacity .35s ease;pointer-events:none}
+.thumb.ver-2 .selo-ia{opacity:1}
+@media (hover:hover){.thumb.duas:hover .img-2,.thumb.duas:hover .selo-ia{opacity:1}}
+.pontos{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:1;display:flex;gap:6px}
+.pontos button{width:9px;height:9px;padding:0;border-radius:50%;border:1px solid var(--surface);background:color-mix(in srgb,var(--surface) 55%,transparent)}
+.pontos button[aria-pressed="true"]{background:var(--surface)}
+@media (prefers-reduced-motion:reduce){.thumb .img-2,.thumb .selo-ia{transition:none}}
+.thumb .tag{z-index:1}
+.pontos button{border-color:color-mix(in srgb,var(--ink) 35%,transparent)}

@@ -205,9 +205,12 @@ function renderGrid(){
   }
   gridEl.innerHTML = lista.map(p => `
     <article class="card">
-      <div class="thumb">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
+      <div class="thumb${p.foto_ia_url ? " duas" : ""}">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
         <button type="button" class="fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}" aria-label="Favoritar ${esc(p.nome)}"><svg class="ic"><use href="#i-coracao"/></svg></button>
-        <img src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy"></div>
+        <img class="img-1" src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy">
+        ${p.foto_ia_url ? `<img class="img-2" src="${esc(p.foto_ia_url)}" alt="${esc(p.nome)} sendo usada" loading="lazy">
+        <span class="selo-ia">imagem ilustrativa</span>
+        <div class="pontos"><button type="button" data-ver="1" aria-label="Ver foto da peça" aria-pressed="true"></button><button type="button" data-ver="2" aria-label="Ver foto usando a peça" aria-pressed="false"></button></div>` : ""}</div>
       <h3>${esc(p.nome)}</h3>
       <div class="meta">${esc(p.banho)}</div>
       ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
@@ -223,7 +226,15 @@ async function carregar(){
 }
 function irParaColecao(){ $("colecao").scrollIntoView({ behavior:"smooth" }); }
 chipsEl.addEventListener("click", e => { const b = e.target.closest(".cat"); if(!b) return; filtro = filtro===b.dataset.k ? "todas" : b.dataset.k; renderChips(); renderGrid(); if (filtro!=="todas") irParaColecao(); });
+function verFoto(thumb, n){
+  thumb.classList.toggle("ver-2", n === 2);
+  thumb.querySelectorAll("[data-ver]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.ver) === n)));
+}
 gridEl.addEventListener("click", e => {
+  const pt = e.target.closest("[data-ver]");
+  if (pt) { verFoto(pt.closest(".thumb"), Number(pt.dataset.ver)); return; }
+  const foto = e.target.closest(".thumb.duas img");
+  if (foto) { const t = foto.closest(".thumb"); verFoto(t, t.classList.contains("ver-2") ? 1 : 2); return; }
   const f = e.target.closest(".fav");
   if (f) { const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id); salvarFavs(); renderFavCount(); renderGrid(); toast(favs.has(id) ? "Guardada nos favoritos" : "Tirada dos favoritos"); return; }
   const b = e.target.closest(".add"); if(!b) return; bag[b.dataset.id] = (bag[b.dataset.id]||0)+1; renderBag(); toast("Adicionado à sacolinha");

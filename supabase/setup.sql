@@ -15,6 +15,10 @@ create table if not exists produtos (
   criado_em timestamptz not null default now()
 );
 
+-- Segunda foto (criada pela IA, com a peça sendo usada) — opcional
+alter table produtos add column if not exists foto_ia_url text;
+alter table produtos add column if not exists foto_ia_caminho text;
+
 alter table produtos enable row level security;
 
 -- Qualquer visitante vê os produtos ativos
