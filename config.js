@@ -8,4 +8,10 @@ window.ANGEL = {
   INSTAGRAM: "angelsemijoia",
   FRETE_GRATIS_ACIMA: 199,
   PARCELAS: 6,
+  // Identificação da loja (obrigatória por lei para quem vende pela internet)
+  CNPJ: "56.706.942/0001-44",
+  ENDERECO: "Qd 28, Rua Dourado, 1110 · Primavera - SP",
+  EMAIL: "angelsemijoias83@gmail.com", // e-mail de contato da loja
+  PRAZO_POSTAGEM: "2 dias úteis",    // depois que o pagamento é confirmado
+  ENVIO_POR: "Correios",
 };

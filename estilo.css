@@ -378,3 +378,12 @@ a.cat{text-decoration:none}
 .peca-fotos{display:grid;gap:12px;min-width:0}
 .peca-foto .selo-ia{position:absolute;left:10px;bottom:10px;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--muted);font-size:.72rem;border-radius:999px;padding:3px 10px}
 .peca-foto .legenda-ia{position:absolute;left:10px;top:10px;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--ink);font-size:.75rem;font-style:italic;border-radius:999px;padding:3px 12px}
+
+/* políticas da loja */
+.links-rodape.politicas{gap:8px 20px;max-width:640px}
+.links-rodape.politicas button{font-size:.88rem;color:var(--muted)}
+footer small.ident{color:var(--muted);font-size:.78rem;max-width:40em}
+.panel.modal h3{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:1.08rem;margin:18px 0 6px;color:var(--ink)}
+.lista-pol{margin:0 0 12px;padding-left:1.1em;display:grid;gap:8px;color:var(--muted)}
+.panel.modal b{color:var(--ink);font-weight:700}
+.ident-pol{font-size:.82rem;margin-top:16px!important}

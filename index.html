@@ -23,6 +23,7 @@
   <symbol id="i-sacola" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
   <symbol id="i-whats" viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-1.5-1-2-2l1-1-1-2z"/></symbol>
   <symbol id="i-insta" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="16.8" cy="7.2" r=".6"/></symbol>
+  <symbol id="i-email" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
   <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
   <symbol id="i-brinco" viewBox="0 0 24 24"><circle cx="8" cy="13" r="3.5"/><circle cx="16" cy="13" r="3.5"/><path d="M8 17v2.5M16 17v2.5"/></symbol>
   <symbol id="i-colar" viewBox="0 0 24 24"><path d="M4 5c2 8 14 8 16 0"/><path d="M12 13.5v1.5"/><circle cx="12" cy="17" r="2.5"/></symbol>
@@ -113,6 +114,10 @@
       <button type="button" data-info="sobre">Sobre a Angel</button><button type="button" data-info="cuidados">Como cuidar</button>
     </nav>
     <span id="contatos"></span>
+    <nav class="links-rodape politicas" aria-label="Políticas da loja">
+      <button type="button" data-info="trocas">Trocas e Devoluções</button><button type="button" data-info="garantia">Garantia</button><button type="button" data-info="envio">Envio e Pagamento</button><button type="button" data-info="privacidade">Privacidade</button><button type="button" data-info="termos">Termos de Uso</button>
+    </nav>
+    <small class="ident" id="identificacao"></small>
     <small>© <span id="ano"></span> Angel Semijoias</small>
   </div>
 </footer>
@@ -140,6 +145,96 @@
     <li><span>iii</span><div>Limpe com flanela seca e macia depois de usar.</div></li>
     <li><span>iv</span><div>Guarde separadas, em saquinho fechado, longe da umidade.</div></li>
   </ul>
+</template>
+
+<template id="t-trocas">
+  <div class="eyebrow">Políticas</div>
+  <h2 id="infoTitulo">Trocas e Devoluções</h2>
+  <h3>Desistência da compra (até 7 dias)</h3>
+  <p>Pelo Código de Defesa do Consumidor (art. 49), você pode desistir da compra em até <b>7 dias corridos depois de receber</b> a peça, sem precisar explicar o motivo.</p>
+  <ul class="lista-pol">
+    <li>Fale com a gente pelo WhatsApp <span data-cfg="TELEFONE"></span> ou pelo e-mail <span data-cfg="EMAIL"></span> informando o pedido.</li>
+    <li>A peça deve voltar sem sinais de uso, com a embalagem e os acessórios que a acompanharam.</li>
+    <li>O frete da devolução fica por nossa conta. Enviamos as instruções de postagem.</li>
+    <li>Devolvemos <b>todo o valor pago, incluindo o frete de envio</b>, em até 7 dias depois de recebermos a peça, pela mesma forma de pagamento (Pix ou estorno no cartão).</li>
+  </ul>
+  <h3>Peça com defeito</h3>
+  <p>Se a peça chegar com defeito ou apresentar problema dentro da garantia, trocamos por uma igual. Se não houver mais em estoque, você escolhe outra de mesmo valor ou recebe o dinheiro de volta. O frete fica por nossa conta.</p>
+  <h3>Pedido errado ou incompleto</h3>
+  <p>Avise em até 7 dias depois de receber, com uma foto do que chegou. A gente corrige sem custo para você.</p>
+</template>
+
+<template id="t-garantia">
+  <div class="eyebrow">Políticas</div>
+  <h2 id="infoTitulo">Garantia</h2>
+  <p>Todas as peças têm a <b>garantia legal de 90 dias</b> contra defeitos (Código de Defesa do Consumidor, art. 26). Além dela, a Angel Semijoias oferece <b>garantia de 6 meses no banho</b>, contados a partir do dia em que você recebe a peça.</p>
+  <h3>O que a garantia cobre</h3>
+  <ul class="lista-pol">
+    <li>Banho que descasca, escurece ou perde a cor com o uso normal.</li>
+    <li>Defeito de fabricação em fechos, tarraxas, argolas e soldas.</li>
+  </ul>
+  <h3>O que a garantia não cobre</h3>
+  <ul class="lista-pol">
+    <li>Contato com perfume, cremes, álcool, produtos de limpeza, cloro de piscina ou água do mar.</li>
+    <li>Quebra, amassado ou perda de pedras causados por queda, puxão ou impacto.</li>
+    <li>Desgaste natural por atrito, como em anéis e pulseiras usados todos os dias.</li>
+    <li>Peças consertadas ou alteradas por outras pessoas.</li>
+  </ul>
+  <h3>Como usar a garantia</h3>
+  <p>Mande pelo WhatsApp <span data-cfg="TELEFONE"></span> uma foto da peça e o nome de quem fez o pedido. Analisamos e respondemos em até 3 dias úteis.</p>
+  <p>Veja também "Como cuidar", no rodapé, para o brilho durar muito mais.</p>
+</template>
+
+<template id="t-envio">
+  <div class="eyebrow">Políticas</div>
+  <h2 id="infoTitulo">Envio e Pagamento</h2>
+  <h3>Pagamento</h3>
+  <p>O pedido é fechado pelo WhatsApp. Aceitamos <b>Pix</b> ou <b>cartão de crédito em até <span data-cfg="PARCELAS"></span>x sem juros</b>. O valor que vale é o confirmado na conversa ao fechar o pedido.</p>
+  <h3>Envio</h3>
+  <ul class="lista-pol">
+    <li>Enviamos para todo o Brasil, a partir de Primavera - SP, pelos <span data-cfg="ENVIO"></span>.</li>
+    <li>A peça é postada em até <b><span data-cfg="PRAZO"></span></b> depois que o pagamento é confirmado.</li>
+    <li>O prazo de entrega depende da sua região e da modalidade de frete. Informamos o valor e o prazo antes de você pagar.</li>
+    <li><b>Frete grátis</b> em compras acima de <span data-cfg="FRETE"></span>.</li>
+    <li>Você recebe o código de rastreio pelo WhatsApp.</li>
+  </ul>
+  <h3>Problemas na entrega</h3>
+  <p>Se o pedido for extraviado ou voltar por problema dos Correios, resolvemos e reenviamos sem custo. Se voltar por endereço informado errado ou por ninguém estar no local nas tentativas de entrega, o novo envio é pago por quem comprou.</p>
+</template>
+
+<template id="t-privacidade">
+  <div class="eyebrow">Políticas</div>
+  <h2 id="infoTitulo">Política de Privacidade</h2>
+  <p>Esta política explica como a Angel Semijoias (CNPJ <span data-cfg="CNPJ"></span>) trata os seus dados, de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei 13.709/2018).</p>
+  <h3>Quais dados usamos</h3>
+  <ul class="lista-pol">
+    <li><b>Dados do pedido:</b> quando você envia um pedido pelo WhatsApp, recebemos o que você escreve, como nome, telefone, CEP e endereço.</li>
+    <li><b>Favoritos:</b> ficam guardados só no seu próprio celular ou computador. Nós não recebemos essa informação.</li>
+  </ul>
+  <h3>Para que usamos</h3>
+  <p>Só para separar, cobrar e entregar o seu pedido, cuidar de trocas e garantia e falar com você sobre a compra.</p>
+  <h3>Com quem compartilhamos</h3>
+  <p>Apenas com quem precisa para o pedido acontecer: Correios ou transportadora, para a entrega, e a empresa de pagamento, para cobrar. <b>Não vendemos nem passamos seus dados para propaganda.</b></p>
+  <h3>Por quanto tempo guardamos</h3>
+  <p>Pelo tempo necessário para o atendimento e pelo prazo que a lei fiscal exige para registros de venda (5 anos).</p>
+  <h3>Seus direitos</h3>
+  <p>Você pode pedir para ver, corrigir ou apagar seus dados a qualquer momento, pelo e-mail <span data-cfg="EMAIL"></span> ou pelo WhatsApp <span data-cfg="TELEFONE"></span>.</p>
+  <h3>Cookies</h3>
+  <p>O site não usa cookies de propaganda nem de rastreamento.</p>
+</template>
+
+<template id="t-termos">
+  <div class="eyebrow">Políticas</div>
+  <h2 id="infoTitulo">Termos de Uso</h2>
+  <ul class="lista-pol">
+    <li><b>Preços e estoque</b> podem mudar sem aviso. Vale o preço confirmado pelo WhatsApp no momento em que o pedido é fechado.</li>
+    <li><b>Cores nas fotos</b> podem variar um pouco conforme a tela do celular ou do computador.</li>
+    <li><b>Fotos com o aviso "imagem ilustrativa"</b> foram criadas com inteligência artificial para mostrar como a peça fica sendo usada. Detalhes como tamanho, formato e quantidade de pedras podem ser diferentes. Para conhecer a peça exatamente como ela é, vale a <b>foto original</b> e a descrição.</li>
+    <li><b>Descrições</b> podem ser escritas com ajuda de inteligência artificial e são revisadas pela loja.</li>
+    <li>Fotos, textos, logo e nome Angel Semijoias pertencem à loja e não podem ser copiados sem autorização.</li>
+    <li>As compras seguem o Código de Defesa do Consumidor. Veja também Trocas e Devoluções, Garantia e Envio e Pagamento, no rodapé.</li>
+  </ul>
+  <p class="ident-pol">Angel Semijoias · CNPJ <span data-cfg="CNPJ"></span> · <span data-cfg="ENDERECO"></span> · <span data-cfg="EMAIL"></span></p>
 </template>
 
 <div class="drawer" id="drawer" hidden>
@@ -179,7 +274,11 @@ document.querySelectorAll(".nParcelas").forEach(el => el.textContent = C.PARCELA
 $("ano").textContent = new Date().getFullYear();
 $("contatos").innerHTML =
   `<a class="contato" href="https://wa.me/${esc(C.WHATSAPP)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whats"/></svg>${esc(C.TELEFONE)}</a>` +
-  `<a class="contato" href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-insta"/></svg>@${esc(C.INSTAGRAM)}</a>`;
+  `<a class="contato" href="https://instagram.com/${esc(C.INSTAGRAM)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-insta"/></svg>@${esc(C.INSTAGRAM)}</a>` +
+  (C.EMAIL ? `<a class="contato" href="mailto:${esc(C.EMAIL)}"><svg class="ic"><use href="#i-email"/></svg>${esc(C.EMAIL)}</a>` : "");
+$("identificacao").textContent = `Angel Semijoias · CNPJ ${C.CNPJ} · ${C.ENDERECO}`;
+const VALORES = { TELEFONE: C.TELEFONE, EMAIL: C.EMAIL || C.TELEFONE, CNPJ: C.CNPJ, ENDERECO: C.ENDERECO,
+  PARCELAS: C.PARCELAS, FRETE: brl(C.FRETE_GRATIS_ACIMA), PRAZO: C.PRAZO_POSTAGEM, ENVIO: C.ENVIO_POR };
 
 const chipsEl = $("chips"), gridEl = $("grid");
 let carregado = false, rolagemLista = {}, telaAtual = "";
@@ -325,7 +424,12 @@ $("verFavoritos").onclick = () => { location.hash = "#favoritos"; };
 
 // janelinha com "Sobre a Angel" e "Como cuidar" (abre pelo rodapé)
 const modalInfo = $("modalInfo");
-function abrirInfo(qual){ $("infoConteudo").innerHTML = ""; $("infoConteudo").appendChild(document.getElementById("t-"+qual).content.cloneNode(true)); modalInfo.hidden = false; }
+function abrirInfo(qual){
+  const el = $("infoConteudo"); el.innerHTML = "";
+  el.appendChild(document.getElementById("t-"+qual).content.cloneNode(true));
+  el.querySelectorAll("[data-cfg]").forEach(s => s.textContent = VALORES[s.dataset.cfg] ?? "");
+  modalInfo.hidden = false; modalInfo.querySelector(".panel").scrollTop = 0;
+}
 document.querySelectorAll(".links-rodape [data-info]").forEach(b => b.addEventListener("click", () => abrirInfo(b.dataset.info)));
 $("fecharInfo").onclick = () => { modalInfo.hidden = true; };
 modalInfo.addEventListener("click", e => { if (e.target === modalInfo) modalInfo.hidden = true; });
