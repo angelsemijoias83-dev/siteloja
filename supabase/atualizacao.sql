@@ -52,3 +52,25 @@ begin
 end $$;
 revoke execute on function confirmar_pedido(uuid, text) from public, anon, authenticated;
 grant execute on function confirmar_pedido(uuid, text) to service_role;
+
+-- 6. Segurança extra: só quem entra com e-mail e senha mexe nas peças, fotos e pedidos
+--    (login anônimo nunca tem acesso, mesmo se for ligado sem querer no Supabase)
+drop policy if exists "painel gerencia produtos" on produtos;
+create policy "painel gerencia produtos" on produtos for all to authenticated
+  using ((auth.jwt()->>'is_anonymous')::boolean is not true)
+  with check ((auth.jwt()->>'is_anonymous')::boolean is not true);
+
+drop policy if exists "painel ve pedidos" on pedidos;
+create policy "painel ve pedidos" on pedidos for select to authenticated
+  using ((auth.jwt()->>'is_anonymous')::boolean is not true);
+drop policy if exists "painel altera pedidos" on pedidos;
+create policy "painel altera pedidos" on pedidos for update to authenticated
+  using ((auth.jwt()->>'is_anonymous')::boolean is not true)
+  with check ((auth.jwt()->>'is_anonymous')::boolean is not true);
+
+drop policy if exists "painel envia fotos" on storage.objects;
+create policy "painel envia fotos" on storage.objects for insert to authenticated
+  with check (bucket_id = 'fotos' and (auth.jwt()->>'is_anonymous')::boolean is not true);
+drop policy if exists "painel apaga fotos" on storage.objects;
+create policy "painel apaga fotos" on storage.objects for delete to authenticated
+  using (bucket_id = 'fotos' and (auth.jwt()->>'is_anonymous')::boolean is not true);

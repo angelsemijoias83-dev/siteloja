@@ -11,7 +11,9 @@ export async function usuarioLogado(request, env) {
   const r = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
     headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
   });
-  return r.ok;
+  if (!r.ok) return false;
+  const u = await r.json().catch(() => ({}));
+  return !!u?.id && u.is_anonymous !== true; // login anônimo nunca vale
 }
 
 // Acesso ao banco com a chave secreta do servidor (só usada aqui, nunca no navegador)
