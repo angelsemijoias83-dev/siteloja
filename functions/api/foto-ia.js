@@ -14,13 +14,15 @@ const ONDE = {
 export async function onRequestPost({ request, env }) {
   if (!(await usuarioLogado(request, env))) return json(401, { erro: "Entre no painel de novo para continuar." });
 
-  const { imagem, categoria, banho } = await request.json().catch(() => ({}));
+  const { imagem, categoria, banho, ajuste } = await request.json().catch(() => ({}));
   const foto = lerImagem(imagem);
   if (!foto) return json(400, { erro: "Escolha a foto original da peça primeiro." });
 
   const pedido = `Crie uma foto realista, estilo editorial de joalheria, mostrando ESTA MESMA peça da imagem ${ONDE[categoria] || "sendo usada por uma mulher"}.
 A peça precisa ficar idêntica à da foto: mesmo formato, mesma cor${banho ? ` (${banho})` : ""}, mesma quantidade e posição de pedras, mesmas proporções. Não invente detalhes nem troque o modelo da peça.
-Pele natural, luz suave de fim de tarde, fundo desfocado em tons pêssego claro e bege. Foco nítido na peça.
+TAMANHO REAL: é uma semijoia delicada, em tamanho real e discreto. Mantenha a escala verdadeira em relação ao corpo (orelha, pescoço, dedo, pulso); nunca aumente a peça para ela aparecer mais. Na dúvida, deixe a peça menor e mais delicada, não maior.
+${ajuste ? `Pedido da lojista (siga com prioridade): ${String(ajuste).slice(0, 200)}
+` : ""}Pele natural, luz suave de fim de tarde, fundo desfocado em tons pêssego claro e bege. Foco nítido na peça.
 Não mostre o rosto inteiro nem os olhos. Sem texto, sem logotipo, sem marca d'água. Formato vertical.`;
 
   const { status, dados, modelo } = await gemini(env, [env.GEMINI_IMAGE_MODEL, "gemini-2.5-flash-image", "gemini-3.1-flash-image"], {

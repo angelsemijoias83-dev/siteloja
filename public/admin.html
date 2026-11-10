@@ -89,6 +89,7 @@ textarea{min-height:120px;resize:vertical}
           <img id="previaIa" alt="" hidden>
           <span class="selo-ia" id="seloIa" hidden>imagem ilustrativa</span>
         </div>
+        <input id="ajusteIa" maxlength="200" placeholder="Ajuste para a IA (opcional): ex. a peça é pequena, uns 2 cm" style="width:100%;margin:8px 0">
         <button class="btn ia" type="button" id="criarFotoIa">✦ Criar foto usando a peça</button>
         <button class="mini" type="button" id="removerIa" hidden>Remover foto da IA</button>
         <span class="msg" id="msgFotoIa"></span>
@@ -221,7 +222,7 @@ $("criarFotoIa").addEventListener("click", async () => {
     const r = await fetch("/api/foto-ia", {
       method: "POST",
       headers: { "Content-Type":"application/json", Authorization: `Bearer ${data.session?.access_token}` },
-      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value }),
+      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value, ajuste: $("ajusteIa").value.trim() }),
     });
     const bruto = await r.text();
     let j; try { j = JSON.parse(bruto); } catch { j = { erro: `Erro ${r.status} no servidor: ${bruto.slice(0, 160)}` }; }
@@ -308,7 +309,7 @@ $("formPeca").addEventListener("submit", async e => {
 
 function limpar(){
   $("formPeca").reset(); foto = null; editando = null; fotoIa = null; removerIa = false;
-  esconderIa(); msg("msgFotoIa",""); $("criarFotoIa").textContent = "✦ Criar foto usando a peça";
+  esconderIa(); msg("msgFotoIa",""); $("ajusteIa").value = ""; $("criarFotoIa").textContent = "✦ Criar foto usando a peça";
   $("previa").hidden = true; $("previa").removeAttribute("src"); $("textoFoto").hidden = false;
   $("tituloForm").textContent = "Nova peça"; $("cancelar").hidden = true; msg("msgIa","");
 }
