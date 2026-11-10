@@ -8,6 +8,7 @@ window.ANGEL = {
   INSTAGRAM: "angelsemijoia",
   FRETE_GRATIS_ACIMA: 199,
   PARCELAS: 6,
+  PAGAMENTO_SITE: false,            // true = mostra "Finalizar compra" (Mercado Pago). Deixe false até ativar a conta.
   // Identificação da loja (obrigatória por lei para quem vende pela internet)
   CNPJ: "56.706.942/0001-44",
   ENDERECO: "Qd 28, Rua Dourado, 1110 · Primavera - SP",

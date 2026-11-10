@@ -533,6 +533,11 @@ function abrirCompra(aberta){
   else renderBag();
 }
 $("irPagamento").onclick = () => abrirCompra(true);
+if (!C.PAGAMENTO_SITE) {
+  $("irPagamento").hidden = true;
+  $("sendWpp").classList.remove("ghost");
+  document.querySelector("#checkout .note").textContent = "O WhatsApp abre com o seu pedido pronto. É só enviar, e a gente combina pagamento e entrega com você.";
+}
 $("voltarSacola").onclick = () => abrirCompra(false);
 $("cCpf").addEventListener("input", e => mascara(e.target, "cpf"));
 $("cTel").addEventListener("input", e => mascara(e.target, "tel"));
