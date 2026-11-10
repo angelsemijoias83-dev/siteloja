@@ -305,6 +305,62 @@ footer .divisor span{width:70px}
 .contato .ic{width:18px;height:18px;color:var(--caramel)}
 footer small{color:var(--muted);opacity:1;font-size:.78rem}
 
+/* ===== Telas: início só com categorias, lista da categoria e peça em detalhe ===== */
+a.cat{text-decoration:none}
+.lista .wrap{padding-block:24px 56px}
+.lista h2{font-size:var(--step-3);text-align:center;margin:8px 0 28px}
+.voltar{display:inline-flex;align-items:center;gap:6px;color:var(--caramel);text-decoration:none;font-style:italic;font-size:1rem;padding:8px 0}
+.voltar .ic{width:18px;height:18px;transform:scaleX(-1)}
+.voltar:hover{text-decoration:underline}
+
+/* cartão inteiro leva para a peça */
+.card{position:relative}
+.card-link{display:flex;flex-direction:column;gap:10px;color:inherit;text-decoration:none;flex:1}
+@media (hover:hover){.card-link:hover h3{text-decoration:underline;text-underline-offset:4px}}
+.fav{z-index:2}
+
+/* no celular o preço fica em cima e o botão embaixo, ocupando a largura do cartão */
+@media (max-width:700px){
+  .price-row{flex-direction:column;align-items:stretch;gap:10px}
+  .add{width:100%;padding:9px 10px;font-size:.88rem}
+  .card h3{font-size:.98rem}
+  .card .desc{-webkit-line-clamp:2}
+}
+
+/* peça em detalhe */
+.peca .wrap{padding-block:16px 64px}
+.peca-grade{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start;margin-top:8px}
+.peca-foto{position:relative;display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.peca-foto img{display:block;width:100%;height:auto;max-height:78vh;object-fit:contain}
+.peca-foto .ampliar{position:absolute;right:10px;bottom:10px;font-size:.75rem;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--ink);border-radius:999px;padding:4px 12px}
+.peca-info{display:grid;gap:14px;align-content:start}
+.peca-info h1{font-size:clamp(1.7rem,3.6vw,2.4rem)}
+.peca-info .meta{font-size:.95rem}
+.peca-preco{font-size:1.6rem;font-variant-numeric:tabular-nums}
+.peca-preco small{display:block;font-size:.85rem;color:var(--muted)}
+.peca-desc{margin:0;color:var(--ink);white-space:pre-line;line-height:1.8}
+.peca-acoes{display:grid;gap:10px;margin-top:6px}
+.peca-acoes .btn{display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;padding:14px 20px;font-size:1rem}
+.peca-acoes .btn.ghost{border-color:var(--line);background:var(--surface)}
+.peca-acoes .ic{width:20px;height:20px}
+.peca-fav[aria-pressed="true"]{color:var(--caramel)}
+.peca-fav[aria-pressed="true"] .ic{fill:currentColor}
+@media (max-width:820px){
+  .peca-grade{grid-template-columns:1fr;gap:20px}
+  .peca-foto img{max-height:none}
+}
+
+/* faixa do topo rodando sem parar */
+.band{overflow:hidden}
+.band-trilho{display:flex;align-items:center;width:max-content;padding-block:9px;animation:faixa-roda 40s linear infinite}
+.band-trilho span{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.band-trilho>span:not(.band-copia),.band-copia>span{padding-inline:22px;border-left:1px solid color-mix(in srgb,var(--band-ink) 30%,transparent)}
+.band-trilho .band-copia{gap:0}
+.band-trilho .ic{width:18px;height:18px;color:#E9C38F}
+.band-trilho b{font-weight:400}
+@keyframes faixa-roda{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.band-trilho{animation:none}}
+.band-trilho>span:not(.band-copia)>span,.band-copia>span>span{display:inline}
 /* duas fotos por peça: original e foto da IA */
 .thumb.duas img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:pointer}
 .thumb .img-2{opacity:0;transition:opacity .35s ease}
@@ -318,3 +374,7 @@ footer small{color:var(--muted);opacity:1;font-size:.78rem}
 @media (prefers-reduced-motion:reduce){.thumb .img-2,.thumb .selo-ia{transition:none}}
 .thumb .tag{z-index:1}
 .pontos button{border-color:color-mix(in srgb,var(--ink) 35%,transparent)}
+/* foto da IA na página da peça */
+.peca-fotos{display:grid;gap:12px;min-width:0}
+.peca-foto .selo-ia{position:absolute;left:10px;bottom:10px;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--muted);font-size:.72rem;border-radius:999px;padding:3px 10px}
+.peca-foto .legenda-ia{position:absolute;left:10px;top:10px;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--ink);font-size:.75rem;font-style:italic;border-radius:999px;padding:3px 12px}
