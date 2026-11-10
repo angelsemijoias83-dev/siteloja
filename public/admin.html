@@ -51,6 +51,11 @@ textarea{min-height:120px;resize:vertical}
 .pedido-topo{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:baseline}
 .pedido ul{margin:0;padding-left:1.1em;font-size:.9rem}
 .pedido .acoes input{flex:1;min-width:180px}
+#caixaTam{display:grid;gap:8px;border:1px dashed var(--line);border-radius:6px;padding:14px}
+.tam-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.tam-campo{font-size:.8rem;gap:4px}
+.tam-campo input{padding:6px 8px}
+input:disabled{opacity:.6}
 </style>
 </head>
 <body>
@@ -112,6 +117,11 @@ textarea{min-height:120px;resize:vertical}
           <input id="estoque" type="number" min="0" step="1" inputmode="numeric" placeholder="Deixe vazio para não controlar">
           <small class="dica">Quando chegar a 0, a peça aparece como <b>Esgotada</b> na loja. Vendas pagas no site descontam sozinhas.</small>
         </label>
+        <div id="caixaTam" hidden>
+          <div class="legenda">Numerações do anel: escreva quantas peças tem de cada número</div>
+          <div class="tam-grade" id="gradeTam"></div>
+          <small class="dica">Deixe vazio os números que você não tem. A cliente escolhe a numeração na hora da compra. Se o anel for regulável, não preencha nada aqui e use o Estoque acima.</small>
+        </div>
         <label>Detalhes para a IA (opcional)<input id="observacoes" placeholder="Ex.: zircônia cristal, fecho lagosta, 45 cm"></label>
         <div class="acoes">
           <button class="btn ia" type="button" id="gerar">✦ Gerar nome e descrição com IA</button>
@@ -270,6 +280,25 @@ $("gerar").addEventListener("click", async () => {
   finally { $("gerar").disabled = false; }
 });
 
+// ---------- Numeração dos anéis ----------
+const NUMEROS = Array.from({length:21}, (_,i) => String(10+i));
+$("gradeTam").innerHTML = NUMEROS.map(n => `<label class="tam-campo">nº ${n}<input type="number" min="0" step="1" inputmode="numeric" data-tam="${n}"></label>`).join("");
+function lerTamanhos(){
+  if ($("categoria").value !== "aneis") return null;
+  const t = {};
+  $("gradeTam").querySelectorAll("input").forEach(i => { if (i.value !== "") t[i.dataset.tam] = Math.max(0, Math.floor(Number(i.value))); });
+  return Object.keys(t).length ? t : null;
+}
+function atualizarTam(){
+  $("caixaTam").hidden = $("categoria").value !== "aneis";
+  const t = lerTamanhos();
+  $("estoque").disabled = !!t;
+  if (t) $("estoque").value = Object.values(t).reduce((a,b) => a+b, 0);
+}
+$("categoria").addEventListener("change", atualizarTam);
+$("gradeTam").addEventListener("input", atualizarTam);
+function textoTamanhos(t){ return Object.keys(t).sort((a,b) => a-b).map(n => t[n] > 0 ? `nº ${n}: ${t[n]}` : `<s>nº ${n}</s>`).join(" · "); }
+
 // ---------- Salvar ----------
 $("formPeca").addEventListener("submit", async e => {
   e.preventDefault();
@@ -281,7 +310,9 @@ $("formPeca").addEventListener("submit", async e => {
       preco: Number($("preco").value), descricao: $("descricao").value.trim() || null,
       estoque: $("estoque").value === "" ? null : Math.max(0, Math.floor(Number($("estoque").value))),
       destaque: $("destaque").value.trim() || null,
+      tamanhos: lerTamanhos(),
     };
+    if (dados.tamanhos) dados.estoque = Object.values(dados.tamanhos).reduce((a,b) => a+b, 0);
     if (foto) {
       const caminho = `${dados.categoria}/${crypto.randomUUID()}.jpg`;
       const up = await db.storage.from("fotos").upload(caminho, foto.blob, { contentType:"image/jpeg" });
@@ -308,7 +339,7 @@ $("formPeca").addEventListener("submit", async e => {
 });
 
 function limpar(){
-  $("formPeca").reset(); foto = null; editando = null; fotoIa = null; removerIa = false;
+  $("formPeca").reset(); $("gradeTam").querySelectorAll("input").forEach(i => i.value = ""); atualizarTam(); foto = null; editando = null; fotoIa = null; removerIa = false;
   esconderIa(); msg("msgFotoIa",""); $("ajusteIa").value = ""; $("criarFotoIa").textContent = "✦ Criar foto usando a peça";
   $("previa").hidden = true; $("previa").removeAttribute("src"); $("textoFoto").hidden = false;
   $("tituloForm").textContent = "Nova peça"; $("cancelar").hidden = true; msg("msgIa","");
@@ -331,7 +362,7 @@ function desenhar(){
       <img src="${esc(p.foto_url)}" alt="">
       <div><b style="font-weight:500">${esc(p.nome)}</b>${p.foto_ia_url ? `<span class="ia-tag">+ foto IA</span>` : ""}
         <div class="meta">${NOMES[p.categoria]} · ${esc(p.banho)} · ${brl(p.preco)}${p.ativo ? "" : " · escondida"}</div>
-        <div class="meta">${p.estoque == null ? "Estoque: sem controle" : p.estoque === 0 ? `<b class="esgotada-tag">Esgotada</b>` : `Estoque: ${p.estoque}`}</div></div>
+        <div class="meta">${p.estoque == null ? "Estoque: sem controle" : p.estoque === 0 ? `<b class="esgotada-tag">Esgotada</b>` : `Estoque: ${p.estoque}`}${p.tamanhos ? ` <small>(${textoTamanhos(p.tamanhos)})</small>` : ""}</div></div>
       <div class="botoes">
         <button class="mini" data-acao="editar" data-id="${p.id}">Editar</button>
         <button class="mini" data-acao="ativo" data-id="${p.id}">${p.ativo ? "Esconder" : "Mostrar"}</button>
@@ -347,6 +378,8 @@ $("lista").addEventListener("click", async e => {
     limpar(); editando = p;
     $("categoria").value = p.categoria; $("banho").value = p.banho; $("preco").value = p.preco;
     $("estoque").value = p.estoque ?? "";
+    $("gradeTam").querySelectorAll("input").forEach(i => i.value = p.tamanhos?.[i.dataset.tam] ?? "");
+    atualizarTam();
     $("nome").value = p.nome; $("descricao").value = p.descricao || ""; $("destaque").value = p.destaque || "";
     $("previa").src = p.foto_url; $("previa").hidden = false; $("textoFoto").hidden = true;
     if (p.foto_ia_url) mostrarIa(p.foto_ia_url);
@@ -382,7 +415,7 @@ function desenharPedidos(){
     const data = new Date(p.pago_em || p.criado_em).toLocaleString("pt-BR", { dateStyle:"short", timeStyle:"short" });
     return `<article class="pedido">
       <div class="pedido-topo"><b>${esc(c.nome)}</b><span>${data}</span><b>${brl(p.total)}</b></div>
-      <ul>${(p.itens||[]).map(i => `<li>${i.qtd}x ${esc(i.nome)} <small>(${esc(i.banho)})</small> · ${brl(i.preco*i.qtd)}</li>`).join("")}
+      <ul>${(p.itens||[]).map(i => `<li>${i.qtd}x ${esc(i.nome)}${i.tamanho ? ` <b>nº ${esc(i.tamanho)}</b>` : ""} <small>(${esc(i.banho)})</small> · ${brl(i.preco*i.qtd)}</li>`).join("")}
         <li>Frete: ${Number(p.frete) > 0 ? brl(p.frete) : "grátis"}</li></ul>
       <p class="meta">${esc(c.logradouro)}, ${esc(c.numero)}${c.complemento ? " – " + esc(c.complemento) : ""} · ${esc(c.bairro)} · ${esc(c.cidade)} - ${esc(c.uf)} · CEP ${esc(c.cep)}</p>
       <p class="meta">CPF ${esc(c.cpf)} · <a href="https://wa.me/55${esc(c.telefone)}" target="_blank" rel="noopener">WhatsApp ${esc(c.telefone)}</a> · ${esc(c.email)}</p>

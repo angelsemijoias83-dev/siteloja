@@ -297,6 +297,13 @@ const bag = {};
 try { Object.assign(bag, JSON.parse(localStorage.getItem("angel-sacolinha") || "{}")); } catch {}
 function salvarSacola(){ try { localStorage.setItem("angel-sacolinha", JSON.stringify(bag)); } catch {} }
 const esgotada = p => p.estoque !== null && p.estoque !== undefined && p.estoque <= 0;
+// anéis com numeração: a sacolinha guarda "id|numero"
+const temTam = p => !!p.tamanhos && Object.keys(p.tamanhos).length > 0;
+const numerosDe = p => Object.keys(p.tamanhos || {}).sort((a,b) => a-b);
+const chaveDe = (id, tam) => tam ? `${id}|${tam}` : id;
+const partes = k => { const [id, tam] = k.split("|"); return { id, tam: tam || null }; };
+const disponivel = (p, tam) => tam ? (Number(p.tamanhos?.[tam]) || 0) : p.estoque;
+let tamPeca = { id: null, tam: null };
 
 // favoritos ficam guardados no navegador da cliente
 let favs = new Set();
@@ -352,7 +359,7 @@ function renderGrid(){
         ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
       </a>
       <div class="price-row"><div class="price">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
-      ${esgotada(p) ? `<button type="button" class="add" disabled>Esgotada</button>` : `<button type="button" class="add" data-id="${p.id}">Adicionar</button>`}</div>
+      ${esgotada(p) ? `<button type="button" class="add" disabled>Esgotada</button>` : `<button type="button" class="add" data-id="${p.id}">${temTam(p) ? "Escolher nº" : "Adicionar"}</button>`}</div>
     </article>`).join("");
 }
 function renderPeca(id){
@@ -382,9 +389,14 @@ function renderPeca(id){
       <div class="peca-info">
         <h1>${esc(p.nome)}</h1>
         <div class="meta">${esc(p.banho)}${cat ? ` · ${cat[1]}` : ""}</div>
-        ${p.estoque > 0 && p.estoque <= 3 ? `<p class="ultimas">Últimas ${p.estoque === 1 ? "unidade" : p.estoque + " unidades"}!</p>` : ""}
+        ${!temTam(p) && p.estoque > 0 && p.estoque <= 3 ? `<p class="ultimas">Últimas ${p.estoque === 1 ? "unidade" : p.estoque + " unidades"}!</p>` : ""}
         <div class="peca-preco">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
         ${p.descricao ? `<p class="peca-desc">${esc(p.descricao)}</p>` : ""}
+        ${temTam(p) && !esgotada(p) ? (() => { const tam = tamPeca.id === p.id ? tamPeca.tam : null, d = tam ? disponivel(p, tam) : 0;
+          return `<div class="tamanhos"><div class="tam-titulo">Escolha a numeração</div>
+          <div class="tam-opcoes">${numerosDe(p).map(n => `<button type="button" class="tam" data-tam="${esc(n)}" aria-pressed="${n === tam}" ${disponivel(p, n) > 0 ? "" : `disabled aria-label="Numeração ${esc(n)} esgotada"`}>${esc(n)}</button>`).join("")}</div>
+          ${tam && d <= 3 ? `<p class="ultimas">${d === 1 ? "Última unidade" : `Últimas ${d} unidades`} na numeração ${esc(tam)}!</p>` : ""}
+          <p class="note">Não sabe sua numeração? Chame a gente no WhatsApp que ajudamos a medir.</p></div>`; })() : ""}
         <div class="peca-acoes">
           ${esgotada(p) ? `<button type="button" class="btn" disabled>Esgotada</button><p class="note">Quer saber quando voltar? Fale com a gente pelo WhatsApp.</p>`
             : `<button type="button" class="btn" data-id="${p.id}" data-add>Adicionar à sacolinha</button>`}
@@ -404,7 +416,12 @@ async function carregar(){
   const { data, error } = await db.from("produtos").select("*").eq("ativo", true).order("criado_em", { ascending:false });
   if (error) { const m = `<p class="status">Não foi possível carregar as peças agora. Atualize a página.</p>`; gridEl.innerHTML = m; $("pecaConteudo").innerHTML = m; console.error(error); return; }
   produtos = data; carregado = true; renderFavCount();
-  for (const id of Object.keys(bag)) { const p = produtos.find(x => x.id === id); if (!p || esgotada(p)) delete bag[id]; else if (p.estoque != null) bag[id] = Math.min(bag[id], p.estoque); }
+  for (const k of Object.keys(bag)) {
+    const { id, tam } = partes(k), p = produtos.find(x => x.id === id);
+    if (!p || esgotada(p) || temTam(p) !== !!tam) { delete bag[k]; continue; }
+    const d = disponivel(p, tam);
+    if (d != null) { if (d <= 0) delete bag[k]; else bag[k] = Math.min(bag[k], d); }
+  }
   salvarSacola(); renderBag(); rota(true);
 }
 
@@ -439,10 +456,16 @@ function rota(recarga){
 addEventListener("hashchange", () => rota());
 
 function alternarFav(id){ favs.has(id) ? favs.delete(id) : favs.add(id); salvarFavs(); renderFavCount(); toast(favs.has(id) ? "Guardada nos favoritos" : "Tirada dos favoritos"); }
-function adicionar(id){
+function adicionar(id, tam){
   const p = produtos.find(x => x.id === id); if (!p || esgotada(p)) return;
-  if (p.estoque != null && (bag[id]||0) >= p.estoque) { toast(`Só temos ${p.estoque} ${p.estoque === 1 ? "unidade" : "unidades"} desta peça`); return; }
-  bag[id] = (bag[id]||0)+1; salvarSacola(); renderBag(); toast("Adicionado à sacolinha");
+  if (temTam(p) && !tam) {
+    if (!location.hash.startsWith("#p/")) { location.hash = "#p/" + id; return; }
+    toast("Escolha a numeração do anel"); return;
+  }
+  if (!temTam(p)) tam = null;
+  const k = chaveDe(id, tam), d = disponivel(p, tam);
+  if (d != null && (bag[k]||0) >= d) { toast(`Só temos ${d} ${d === 1 ? "unidade" : "unidades"} ${tam ? "nesta numeração" : "desta peça"}`); return; }
+  bag[k] = (bag[k]||0)+1; salvarSacola(); renderBag(); toast(tam ? `Numeração ${tam} adicionada à sacolinha` : "Adicionado à sacolinha");
 }
 function verFoto(thumb, n){
   thumb.classList.toggle("ver-2", n === 2);
@@ -457,7 +480,8 @@ gridEl.addEventListener("click", e => {
 });
 $("pecaConteudo").addEventListener("click", e => {
   const f = e.target.closest("[data-fav]"); if (f) { alternarFav(f.dataset.fav); renderPeca(f.dataset.fav); return; }
-  const b = e.target.closest("[data-add]"); if (b) { adicionar(b.dataset.id); return; }
+  const t = e.target.closest("[data-tam]"); if (t) { const id = location.hash.slice(3); tamPeca = { id, tam: t.dataset.tam }; renderPeca(id); return; }
+  const b = e.target.closest("[data-add]"); if (b) { adicionar(b.dataset.id, tamPeca.id === b.dataset.id ? tamPeca.tam : null); return; }
   // volta pelo histórico para a lista ficar no mesmo ponto em que a cliente estava
   const v = e.target.closest("[data-voltar]");
   if (v && ultimaLista && history.length > 1) { e.preventDefault(); history.back(); }
@@ -487,26 +511,26 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { drawer.hid
 
 function renderBag(){
   for (const id of Object.keys(bag)) if (!(bag[id] > 0)) delete bag[id];
-  const ids = Object.keys(bag).filter(id => produtos.some(x => x.id === id));
-  const n = ids.reduce((s,id) => s + bag[id], 0);
+  const ids = Object.keys(bag).filter(k => produtos.some(x => x.id === partes(k).id));
+  const n = ids.reduce((s,k) => s + bag[k], 0);
   $("count").textContent = n;
   $("empty").hidden = n > 0;
   $("checkout").hidden = n === 0 || !$("formCompra").hidden;
   let total = 0; const linhas = [];
-  $("items").innerHTML = ids.map(id => {
-    const p = produtos.find(x => x.id === id), q = bag[id]; total += p.preco*q;
-    linhas.push(`• ${q}x ${p.nome} (${p.banho}) — ${brl(p.preco*q)}`);
-    return `<li><div><b style="font-weight:500">${esc(p.nome)}</b><div class="meta">${esc(p.banho)} · ${brl(p.preco)}</div></div>
-      <div class="qty"><button type="button" data-d="-1" data-id="${id}" aria-label="Diminuir">−</button><span>${q}</span><button type="button" data-d="1" data-id="${id}" aria-label="Aumentar">+</button></div></li>`;
+  $("items").innerHTML = ids.map(k => {
+    const { id, tam } = partes(k), p = produtos.find(x => x.id === id), q = bag[k]; total += p.preco*q;
+    linhas.push(`• ${q}x ${p.nome}${tam ? ` nº ${tam}` : ""} (${p.banho}) — ${brl(p.preco*q)}`);
+    return `<li><div><b style="font-weight:500">${esc(p.nome)}</b><div class="meta">${esc(p.banho)}${tam ? ` · nº ${esc(tam)}` : ""} · ${brl(p.preco)}</div></div>
+      <div class="qty"><button type="button" data-d="-1" data-id="${esc(k)}" aria-label="Diminuir">−</button><span>${q}</span><button type="button" data-d="1" data-id="${esc(k)}" aria-label="Aumentar">+</button></div></li>`;
   }).join("");
   $("total").textContent = brl(total);
   const msg = `Olá, Angel! Quero fazer este pedido:\n${linhas.join("\n")}\nTotal: ${brl(total)}\n\nMeu nome:\nMeu CEP:`;
   $("sendWpp").href = `https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent(msg)}`;
 }
-$("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; const id = b.dataset.id, p = produtos.find(x => x.id === id);
-  const novo = Math.max(0, bag[id] + Number(b.dataset.d));
-  if (p && p.estoque != null && novo > p.estoque) { toast(`Só temos ${p.estoque} ${p.estoque === 1 ? "unidade" : "unidades"} desta peça`); return; }
-  bag[id] = novo; salvarSacola(); renderBag(); });
+$("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; const k = b.dataset.id, { id, tam } = partes(k), p = produtos.find(x => x.id === id);
+  const novo = Math.max(0, bag[k] + Number(b.dataset.d)), d = p ? disponivel(p, tam) : null;
+  if (d != null && novo > d) { toast(`Só temos ${d} ${d === 1 ? "unidade" : "unidades"} ${tam ? "nesta numeração" : "desta peça"}`); return; }
+  bag[k] = novo; salvarSacola(); renderBag(); });
 let tt; function toast(m){ const el = $("toast"); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(() => el.hidden = true, 1800); }
 
 
@@ -518,7 +542,7 @@ function mascara(el, tipo){
     : tipo === "cep" ? d.slice(0,8).replace(/(\d{5})(\d)/,"$1-$2")
     : d.slice(0,11).replace(/(\d{2})(\d)/,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2");
 }
-function subtotalSacola(){ return Object.keys(bag).reduce((s,id) => { const p = produtos.find(x => x.id === id); return s + (p ? p.preco * bag[id] : 0); }, 0); }
+function subtotalSacola(){ return Object.keys(bag).reduce((s,k) => { const p = produtos.find(x => x.id === partes(k).id); return s + (p ? p.preco * bag[k] : 0); }, 0); }
 let freteAtual = null;
 function mostrarResumo(){
   const sub = subtotalSacola();
@@ -575,7 +599,7 @@ $("formCompra").addEventListener("submit", async e => {
   $("pagar").disabled = true; $("pagar").textContent = "Abrindo o pagamento…"; erro("");
   try {
     const r = await fetch("/api/checkout", { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ itens: Object.keys(bag).map(id => ({ id, qtd: bag[id] })), cliente: campos }) });
+      body: JSON.stringify({ itens: Object.keys(bag).map(k => ({ id: partes(k).id, tamanho: partes(k).tam, qtd: bag[k] })), cliente: campos }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok || !j.url) throw new Error(j.erro || "Não foi possível abrir o pagamento. Tente de novo.");
     location.href = j.url;

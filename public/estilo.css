@@ -418,3 +418,12 @@ button.link{background:none;border:0;padding:0;color:var(--caramel);text-decorat
 .thumb.duas.ver-2 .selo-ia{opacity:0}
 @media (hover:hover){.thumb.duas:hover .selo-ia{opacity:0}}
 .peca-foto .legenda-ia{z-index:1}
+
+/* numeração dos anéis */
+.tamanhos{display:grid;gap:8px;margin-top:4px}
+.tam-titulo{font-size:.88rem;font-weight:500}
+.tam-opcoes{display:flex;flex-wrap:wrap;gap:8px}
+.tam{min-width:44px;height:44px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;font:inherit;font-size:.92rem;cursor:pointer}
+.tam[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tam:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.tamanhos .note{margin:0}

@@ -37,19 +37,26 @@ export async function onRequestPost({ request, env }) {
 
   // 2. Peças: preço e estoque conferidos no banco
   const pedidos = (Array.isArray(itens) ? itens : [])
-    .map((i) => ({ id: String(i?.id || ""), qtd: Math.floor(Number(i?.qtd)) }))
+    .map((i) => ({ id: String(i?.id || ""), qtd: Math.floor(Number(i?.qtd)), tamanho: i?.tamanho ? String(i.tamanho).slice(0, 6) : null }))
     .filter((i) => UUID.test(i.id) && i.qtd > 0 && i.qtd <= 20);
   if (!pedidos.length) return json(400, { erro: "Sua sacolinha está vazia." });
   const ids = [...new Set(pedidos.map((i) => i.id))];
-  const produtos = await banco(env, `produtos?select=id,nome,banho,preco,estoque,ativo&id=in.(${ids.join(",")})`);
+  const produtos = await banco(env, `produtos?select=id,nome,banho,preco,estoque,tamanhos,ativo&id=in.(${ids.join(",")})`);
   const linhas = [];
   for (const i of pedidos) {
     const p = produtos.find((x) => x.id === i.id);
     if (!p || !p.ativo) return json(409, { erro: "Uma das peças não está mais disponível. Atualize a página." });
-    if (p.estoque !== null && p.estoque < i.qtd) {
+    const comNumeracao = p.tamanhos && Object.keys(p.tamanhos).length > 0;
+    if (comNumeracao) {
+      if (!i.tamanho) return json(409, { erro: `Escolha a numeração de ${p.nome}.` });
+      const tem = Number(p.tamanhos[i.tamanho]) || 0;
+      if (tem < i.qtd) {
+        return json(409, { erro: tem === 0 ? `${p.nome} nº ${i.tamanho} esgotou. Tire da sacolinha para continuar.` : `Só temos ${tem} unidade(s) de ${p.nome} nº ${i.tamanho}.` });
+      }
+    } else if (p.estoque !== null && p.estoque < i.qtd) {
       return json(409, { erro: p.estoque === 0 ? `${p.nome} esgotou. Tire da sacolinha para continuar.` : `Só temos ${p.estoque} unidade(s) de ${p.nome}.` });
     }
-    linhas.push({ id: p.id, nome: p.nome, banho: p.banho, preco: Number(p.preco), qtd: i.qtd });
+    linhas.push({ id: p.id, nome: p.nome, banho: p.banho, preco: Number(p.preco), qtd: i.qtd, ...(comNumeracao ? { tamanho: i.tamanho } : {}) });
   }
   const subtotal = Math.round(linhas.reduce((s, l) => s + l.preco * l.qtd, 0) * 100) / 100;
   const frete = calcularFrete(cliente.uf, subtotal);
@@ -65,7 +72,7 @@ export async function onRequestPost({ request, env }) {
   const origem = new URL(request.url).origin;
   const seguro = origem.startsWith("https://");
   const preferencia = {
-    items: linhas.map((l) => ({ id: l.id, title: `${l.nome} (${l.banho})`, quantity: l.qtd, unit_price: l.preco, currency_id: "BRL" })),
+    items: linhas.map((l) => ({ id: l.id, title: `${l.nome}${l.tamanho ? ` nº ${l.tamanho}` : ""} (${l.banho})`, quantity: l.qtd, unit_price: l.preco, currency_id: "BRL" })),
     shipments: { cost: frete, mode: "not_specified" },
     payer: {
       name: cliente.nome, email: cliente.email,

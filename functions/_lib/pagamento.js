@@ -37,7 +37,7 @@ export async function processarPagamento(env, pagamentoId) {
 async function enviarEmails(env, p) {
   if (!env.RESEND_API_KEY) return;
   const c = p.cliente;
-  const itens = p.itens.map((i) => `<tr><td>${i.qtd}x ${esc(i.nome)} <small>(${esc(i.banho)})</small></td><td align="right">${brl(i.preco * i.qtd)}</td></tr>`).join("");
+  const itens = p.itens.map((i) => `<tr><td>${i.qtd}x ${esc(i.nome)}${i.tamanho ? ` <b>nº ${esc(i.tamanho)}</b>` : ""} <small>(${esc(i.banho)})</small></td><td align="right">${brl(i.preco * i.qtd)}</td></tr>`).join("");
   const tabela = `<table cellpadding="6" style="border-collapse:collapse;width:100%;max-width:520px">${itens}
     <tr><td>Frete</td><td align="right">${p.frete > 0 ? brl(p.frete) : "Grátis"}</td></tr>
     <tr><td><b>Total</b></td><td align="right"><b>${brl(p.total)}</b></td></tr></table>`;
