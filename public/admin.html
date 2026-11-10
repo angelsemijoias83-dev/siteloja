@@ -44,6 +44,13 @@ textarea{min-height:120px;resize:vertical}
 .mini{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 12px;font-size:.8rem}
 .mini.perigo{border-color:#B3261E;color:#B3261E}
 @media (max-width:520px){.item{grid-template-columns:56px 1fr}.item .botoes{grid-column:1/-1;justify-content:flex-start}}
+.dica{color:var(--muted);font-weight:400;font-size:.78rem}
+.esgotada-tag{color:#B3261E}
+.pedidos{display:grid;gap:14px}
+.pedido{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px}
+.pedido-topo{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:baseline}
+.pedido ul{margin:0;padding-left:1.1em;font-size:.9rem}
+.pedido .acoes input{flex:1;min-width:180px}
 </style>
 </head>
 <body>
@@ -100,6 +107,10 @@ textarea{min-height:120px;resize:vertical}
             </select></label>
           <label>Preço (R$)<input id="preco" type="number" min="0" step="0.01" inputmode="decimal" required></label>
         </div>
+        <label>Estoque (quantas peças você tem)
+          <input id="estoque" type="number" min="0" step="1" inputmode="numeric" placeholder="Deixe vazio para não controlar">
+          <small class="dica">Quando chegar a 0, a peça aparece como <b>Esgotada</b> na loja. Vendas pagas no site descontam sozinhas.</small>
+        </label>
         <label>Detalhes para a IA (opcional)<input id="observacoes" placeholder="Ex.: zircônia cristal, fecho lagosta, 45 cm"></label>
         <div class="acoes">
           <button class="btn ia" type="button" id="gerar">✦ Gerar nome e descrição com IA</button>
@@ -125,6 +136,15 @@ textarea{min-height:120px;resize:vertical}
     </div>
     <div class="lista" id="lista"></div>
   </section>
+
+  <!-- Pedidos pagos pelo site -->
+  <section class="box" id="areaPedidos" hidden>
+    <div class="shop-head" style="margin:0">
+      <h2>Pedidos do site</h2>
+      <div class="chips" id="filtrosPedidos"></div>
+    </div>
+    <div class="pedidos" id="pedidos"></div>
+  </section>
 </main>
 
 <script src="config.js"></script>
@@ -148,8 +168,8 @@ function msg(id, texto, erro=false){ $(id).textContent = texto; $(id).classList.
 // ---------- Login ----------
 async function mostrarPainel(logado){
   $("formLogin").hidden = logado;
-  $("areaCadastro").hidden = $("areaLista").hidden = $("sair").hidden = !logado;
-  if (logado) carregar();
+  $("areaCadastro").hidden = $("areaLista").hidden = $("areaPedidos").hidden = $("sair").hidden = !logado;
+  if (logado) { carregar(); carregarPedidos(); }
 }
 db.auth.getSession().then(({data}) => mostrarPainel(!!data.session));
 $("formLogin").addEventListener("submit", async e => {
@@ -258,6 +278,7 @@ $("formPeca").addEventListener("submit", async e => {
     const dados = {
       nome: $("nome").value.trim(), categoria: $("categoria").value, banho: $("banho").value,
       preco: Number($("preco").value), descricao: $("descricao").value.trim() || null,
+      estoque: $("estoque").value === "" ? null : Math.max(0, Math.floor(Number($("estoque").value))),
       destaque: $("destaque").value.trim() || null,
     };
     if (foto) {
@@ -308,7 +329,8 @@ function desenhar(){
     <div class="item ${p.ativo ? "" : "oculto"}">
       <img src="${esc(p.foto_url)}" alt="">
       <div><b style="font-weight:500">${esc(p.nome)}</b>${p.foto_ia_url ? `<span class="ia-tag">+ foto IA</span>` : ""}
-        <div class="meta">${NOMES[p.categoria]} · ${esc(p.banho)} · ${brl(p.preco)}${p.ativo ? "" : " · escondida"}</div></div>
+        <div class="meta">${NOMES[p.categoria]} · ${esc(p.banho)} · ${brl(p.preco)}${p.ativo ? "" : " · escondida"}</div>
+        <div class="meta">${p.estoque == null ? "Estoque: sem controle" : p.estoque === 0 ? `<b class="esgotada-tag">Esgotada</b>` : `Estoque: ${p.estoque}`}</div></div>
       <div class="botoes">
         <button class="mini" data-acao="editar" data-id="${p.id}">Editar</button>
         <button class="mini" data-acao="ativo" data-id="${p.id}">${p.ativo ? "Esconder" : "Mostrar"}</button>
@@ -323,6 +345,7 @@ $("lista").addEventListener("click", async e => {
   if (b.dataset.acao === "editar") {
     limpar(); editando = p;
     $("categoria").value = p.categoria; $("banho").value = p.banho; $("preco").value = p.preco;
+    $("estoque").value = p.estoque ?? "";
     $("nome").value = p.nome; $("descricao").value = p.descricao || ""; $("destaque").value = p.destaque || "";
     $("previa").src = p.foto_url; $("previa").hidden = false; $("textoFoto").hidden = true;
     if (p.foto_ia_url) mostrarIa(p.foto_ia_url);
@@ -339,6 +362,41 @@ $("lista").addEventListener("click", async e => {
     await db.storage.from("fotos").remove([p.foto_caminho, p.foto_ia_caminho].filter(Boolean));
     carregar();
   }
+});
+
+// ---------- Pedidos do site ----------
+let pedidos = [], filtroPed = "pago";
+const ST = { pago: "A enviar", enviado: "Enviados", pendente: "Aguardando pagamento", cancelado: "Cancelados" };
+async function carregarPedidos(){
+  const { data, error } = await db.from("pedidos").select("*").order("criado_em", { ascending:false }).limit(200);
+  if (error) { $("pedidos").innerHTML = `<p class="msg">Os pedidos aparecem aqui depois que você rodar o arquivo atualizacao.sql no Supabase.</p>`; return; }
+  pedidos = data; desenharPedidos();
+}
+function desenharPedidos(){
+  $("filtrosPedidos").innerHTML = Object.entries(ST).map(([k,l]) =>
+    `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===filtroPed}">${l} (${pedidos.filter(p => p.status===k).length})</button>`).join("");
+  const lista = pedidos.filter(p => p.status === filtroPed);
+  if (!lista.length) { $("pedidos").innerHTML = `<p class="msg">Nenhum pedido aqui ainda.</p>`; return; }
+  $("pedidos").innerHTML = lista.map(p => { const c = p.cliente || {};
+    const data = new Date(p.pago_em || p.criado_em).toLocaleString("pt-BR", { dateStyle:"short", timeStyle:"short" });
+    return `<article class="pedido">
+      <div class="pedido-topo"><b>${esc(c.nome)}</b><span>${data}</span><b>${brl(p.total)}</b></div>
+      <ul>${(p.itens||[]).map(i => `<li>${i.qtd}x ${esc(i.nome)} <small>(${esc(i.banho)})</small> · ${brl(i.preco*i.qtd)}</li>`).join("")}
+        <li>Frete: ${Number(p.frete) > 0 ? brl(p.frete) : "grátis"}</li></ul>
+      <p class="meta">${esc(c.logradouro)}, ${esc(c.numero)}${c.complemento ? " – " + esc(c.complemento) : ""} · ${esc(c.bairro)} · ${esc(c.cidade)} - ${esc(c.uf)} · CEP ${esc(c.cep)}</p>
+      <p class="meta">CPF ${esc(c.cpf)} · <a href="https://wa.me/55${esc(c.telefone)}" target="_blank" rel="noopener">WhatsApp ${esc(c.telefone)}</a> · ${esc(c.email)}</p>
+      ${p.status === "pago" ? `<div class="acoes"><input id="rast-${p.id}" placeholder="Código de rastreio (opcional)"><button class="mini" data-enviar="${p.id}">Marcar como enviado</button></div>` : ""}
+      ${p.status === "enviado" && p.rastreio ? `<p class="meta">Rastreio: ${esc(p.rastreio)}</p>` : ""}
+    </article>`; }).join("");
+}
+$("filtrosPedidos").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; filtroPed = b.dataset.k; desenharPedidos(); });
+$("pedidos").addEventListener("click", async e => {
+  const b = e.target.closest("[data-enviar]"); if (!b) return;
+  const id = b.dataset.enviar, rastreio = ($("rast-" + id)?.value || "").trim() || null;
+  b.disabled = true;
+  const { error } = await db.from("pedidos").update({ status: "enviado", rastreio }).eq("id", id);
+  if (error) { b.disabled = false; b.textContent = "Não salvou. Tentar de novo"; return; }
+  carregarPedidos();
 });
 </script>
 </body>

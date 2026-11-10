@@ -1,0 +1,23 @@
+# Chaves do site para rodar NO COMPUTADOR (npm run local).
+# Copie este arquivo com o nome .dev.vars e preencha. O .dev.vars NÃO vai para o GitHub.
+# No Cloudflare, estas mesmas chaves vão em: Workers & Pages > angel-semijoias > Settings > Variables and Secrets.
+
+# Supabase (públicas)
+SUPABASE_URL=https://eqwyuwxdyryhadjalsgs.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_JJVPRf15Abkls4oadRE-Xg_hMoC-gKT
+
+# Supabase: chave SECRETA (Project Settings > API Keys > Secret keys). Nunca mande para ninguém.
+SUPABASE_SERVICE_KEY=
+
+# Gemini (aistudio.google.com)
+GEMINI_API_KEY=
+
+# Mercado Pago: Access Token (Suas integrações > Credenciais). Para testar, use o de TESTE.
+MP_ACCESS_TOKEN=
+
+# E-mails de venda (resend.com > API Keys)
+RESEND_API_KEY=
+EMAIL_LOJA=angelsemijoias83@gmail.com
+# Só depois de verificar o domínio no Resend, para mandar e-mail também para a cliente:
+# EMAIL_REMETENTE=Angel Semijoias <pedidos@angelsemijoia.com.br>
+WHATSAPP_LOJA=(18) 98119-6386

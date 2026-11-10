@@ -2,11 +2,10 @@
   "name": "angel-semijoias",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=20"
+  "scripts": {
+    "local": "wrangler pages dev public --port 8788"
   },
-  "dependencies": {
-    "@google/genai": "^3.0.0",
-    "@supabase/supabase-js": "2.45.4"
+  "devDependencies": {
+    "wrangler": "4.153.0"
   }
 }

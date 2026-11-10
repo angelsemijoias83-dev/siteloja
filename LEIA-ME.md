@@ -1,72 +1,62 @@
-# Angel Semijoias: como colocar o site no ar
+# Angel Semijoias: guia do site
 
-O site tem duas partes:
+## Como o site funciona
 
-- **A loja** (`index.html`): o que as clientes veem. A sacolinha manda o pedido pronto para o seu WhatsApp.
-- **O painel** (`admin.html`): só você entra, com e-mail e senha. Você escolhe a categoria, tira ou escolhe a foto, clica em **Gerar nome e descrição com IA**, confere o preço e salva. A peça aparece na loja na hora.
-
-Você vai usar estas contas:
+- **Loja** (`public/index.html`): vitrine por categorias, página de cada peça, favoritos e sacolinha. A cliente escolhe entre **Finalizar compra** (paga no site pelo Mercado Pago: Pix ou cartão em até 6x) ou **Pedir pelo WhatsApp**.
+- **Painel** (`/admin`): só você entra. Cadastra peças com foto, nome e descrição pela IA, segunda foto com a peça sendo usada (IA), estoque, e vê os **pedidos pagos**.
+- **Funções do servidor** (`functions/api/`): IA (Gemini), frete por CEP, criação do pagamento, confirmação do pagamento (baixa o estoque e manda e-mail).
 
 | Serviço | Para que serve | Custo |
 |---|---|---|
-| Supabase | guarda as fotos e os produtos | grátis |
-| Google AI Studio (Gemini) | a IA que escreve as descrições | grátis no plano básico, com limite diário |
-| GitHub | guarda os arquivos do site | grátis |
-| Netlify | deixa o site no ar | grátis |
-| Registro.br | o domínio angelsemijoia.com.br | R$ 76 por 2 anos |
+| Cloudflare Pages | deixa o site no ar | grátis |
+| Supabase | peças, fotos e pedidos | grátis |
+| Gemini (Google AI Studio) | descrições e fotos com IA | pago por uso (centavos) |
+| Mercado Pago | recebe os pagamentos | taxa por venda |
+| Resend | e-mail a cada venda | grátis até 3 mil e-mails/mês |
+| Registro.br | domínio angelsemijoia.com.br | já pago |
 
 ---
 
-## 1. Supabase (fotos e produtos)
+## 1. Atualizar o banco (Supabase) — uma vez só
 
-1. Crie uma conta em **supabase.com** e clique em **New project**. Nome: `angel-semijoias`. Região: **South America (São Paulo)**. Anote a senha do banco.
-2. No menu da esquerda, abra **SQL Editor**, cole todo o conteúdo do arquivo `supabase/setup.sql` e clique em **Run**.
-3. Abra **Authentication → Users → Add user → Create new user**. Coloque seu e-mail e uma senha forte, marque **Auto Confirm User** e salve. É com esse login que você entra no painel.
-4. **Importante:** abra **Authentication → Sign In / Providers** e **desligue "Allow new users to sign up"**. Assim ninguém mais consegue criar conta no seu painel.
-5. Abra **Project Settings → API** e copie dois valores: **Project URL** e a chave **anon public**.
-6. No arquivo `config.js`, cole esses dois valores e troque o WhatsApp e o Instagram pelos seus.
+No Supabase, abra **Editor SQL**, cole todo o arquivo `supabase/atualizacao.sql` e clique em **Executar**. Ele cria: categoria Chokers, segunda foto, estoque, tabela de pedidos e a confirmação de pagamento.
 
-## 2. Gemini (a IA)
+## 2. Chaves que você vai precisar
 
-1. Entre em **aistudio.google.com** com sua conta Google.
-2. Clique em **Get API key → Create API key** e copie a chave.
-3. Guarde em lugar seguro. **Não mande a chave por mensagem e não coloque no `config.js`**: ela vai só no Netlify (passo 4).
+Todas ficam **só com você**. Nunca mande por mensagem.
 
-No plano grátis, o Google pode usar o que é enviado para melhorar os produtos dele. Para fotos de semijoias isso não costuma ser problema. Se um dia quiser evitar, é só ativar o faturamento no AI Studio.
+1. **Supabase, chave secreta**: Project Settings → API Keys → *Secret keys*.
+2. **Gemini**: aistudio.google.com → Get API key.
+3. **Mercado Pago**: crie a conta de vendedor com seu CNPJ. Depois, em **Suas integrações → Criar aplicação → Credenciais**, copie o **Access Token**. Para testar, use as **credenciais de teste**. Para vender de verdade, as **de produção**.
+4. **Resend**: crie a conta em resend.com **com o e-mail angelsemijoias83@gmail.com** e copie a API Key.
 
-## 3. GitHub (guardar os arquivos)
+## 3. Testar no computador
 
-1. Crie uma conta em **github.com** e um repositório novo chamado `angel-semijoias` (pode ser privado).
-2. Clique em **uploading an existing file** e arraste todos os arquivos e pastas deste projeto, **menos a pasta `node_modules`**. Clique em **Commit changes**.
+1. Na pasta do projeto, abra o arquivo **`.dev.vars`** no Bloco de Notas e cole as chaves depois do `=` de cada linha. Salve.
+2. Abra o terminal nesta pasta e rode:
 
-## 4. Netlify (site no ar)
+   ```bash
+   npm run local
+   ```
 
-1. Entre em **netlify.com** com a sua conta do GitHub.
-2. **Add new site → Import an existing project → GitHub** e escolha `angel-semijoias`. Deixe as opções como estão.
-3. Antes de publicar, abra **Environment variables** e adicione três:
-   - `GEMINI_API_KEY`: a chave do Gemini
-   - `SUPABASE_URL`: o Project URL do Supabase
-   - `SUPABASE_ANON_KEY`: a chave anon do Supabase
-4. Clique em **Deploy**. Em um minuto o site fica no ar num endereço tipo `angel-semijoias.netlify.app`.
+3. Abra **http://127.0.0.1:8788** (loja) e **http://127.0.0.1:8788/admin** (painel).
 
-## 5. Seu domínio
+As peças que você cadastrar no teste vão para o banco de verdade.
 
-1. Compre `angelsemijoia.com.br` no **registro.br**.
-2. No Netlify, abra **Domain management → Add a domain** e digite o domínio.
-3. O Netlify mostra os **servidores DNS** (ex.: `dns1.p01.nsone.net`). No Registro.br, abra o domínio, clique em **Alterar servidores DNS** e cole esses endereços.
-4. Em algumas horas o site abre no seu domínio, já com cadeado (https).
+Com as credenciais de **teste** do Mercado Pago, use os cartões de teste da página de credenciais. Nenhum dinheiro é cobrado.
 
-## 6. Usando o painel
+## 4. Colocar no ar (Cloudflare)
 
-Abra `https://angelsemijoia.com.br/admin.html` (dá para salvar na tela inicial do celular).
+1. Crie a conta grátis em **cloudflare.com**.
+2. **Workers & Pages → Create → Pages → Connect to Git** → escolha o repositório **siteloja**.
+3. Configuração: *Framework preset* **None**, *Build command* **vazio**, *Build output directory* **public**.
+4. Em **Settings → Variables and Secrets**, adicione as mesmas chaves do `.dev.vars`, usando as de **produção** do Mercado Pago.
+5. **Custom domains** → adicione `angelsemijoia.com.br`. O Cloudflare mostra 2 servidores DNS para colocar no Registro.br.
 
-1. Escolha a **categoria**, o **banho** e o **preço**.
-2. Toque na caixa da foto e tire ou escolha a foto da peça. Fotos com fundo claro e boa luz ficam melhores.
-3. Se quiser, escreva detalhes em **Detalhes para a IA** (ex.: "zircônia cristal, 45 cm").
-4. Clique em **Gerar nome e descrição com IA**, revise o texto e clique em **Salvar peça**.
+## 5. Ajustes do dia a dia
 
-Na lista abaixo você pode **Editar**, **Esconder** (some da loja sem apagar, bom para peças esgotadas) ou **Apagar**.
-
-## Quando mudar alguma coisa
-
-Para trocar textos, cores ou contatos, edite o arquivo no GitHub (ícone de lápis). O Netlify atualiza o site sozinho em cerca de um minuto. As peças você muda direto pelo painel, sem mexer em arquivo nenhum.
+- **Frete**: valores por estado em `functions/_lib/loja.js`. Hoje: SP R$ 15, Sul/Sudeste R$ 22, demais R$ 30, grátis acima de R$ 199.
+- **Textos, contatos, CNPJ, parcelas**: `public/config.js`.
+- **Estoque**: no painel, campo **Estoque** de cada peça. Vazio = não controla. Vendas pagas no site descontam sozinhas. Vendas no WhatsApp ou em mãos, ajuste no painel.
+- **Pedidos**: no painel, em **Pedidos do site**. Depois de postar, coloque o rastreio e toque em **Marcar como enviado**.
+- **E-mail para a cliente**: o Mercado Pago já manda o comprovante. Para o site também mandar e-mail para a cliente, verifique o domínio no Resend e preencha `EMAIL_REMETENTE`.

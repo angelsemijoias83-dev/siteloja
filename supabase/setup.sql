@@ -47,3 +47,5 @@ create policy "painel envia fotos" on storage.objects
 drop policy if exists "painel apaga fotos" on storage.objects;
 create policy "painel apaga fotos" on storage.objects
   for delete to authenticated using (bucket_id = 'fotos');
+
+-- Estoque, pedidos e confirmação de pagamento: rode também o arquivo atualizacao.sql

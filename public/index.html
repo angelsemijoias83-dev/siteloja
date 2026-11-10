@@ -243,10 +243,42 @@
     <ul class="items" id="items"></ul>
     <p class="empty" id="empty">Sua sacolinha está vazia. Escolha uma peça na coleção.</p>
     <div id="checkout" hidden>
-      <div class="total"><span>Total</span><b id="total">R$ 0,00</b></div>
-      <p class="note">Ao continuar, o WhatsApp abre com o seu pedido pronto. É só enviar.</p>
-      <div class="cta"><a class="btn" id="sendWpp" href="#" target="_blank" rel="noopener">Enviar pedido no WhatsApp</a></div>
+      <div class="total"><span>Subtotal</span><b id="total">R$ 0,00</b></div>
+      <div class="opcoes-compra">
+        <button class="btn" id="irPagamento" type="button">Finalizar compra</button>
+        <a class="btn ghost" id="sendWpp" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whats"/></svg>Pedir pelo WhatsApp</a>
+      </div>
+      <p class="note">No site: Pix ou cartão em até <span class="nParcelas">6</span>x sem juros, com o Mercado Pago. Pelo WhatsApp: a gente combina tudo com você.</p>
     </div>
+    <form class="compra" id="formCompra" hidden novalidate>
+      <button type="button" class="voltar" id="voltarSacola"><svg class="ic"><use href="#i-seta"/></svg>Voltar para a sacolinha</button>
+      <h3>Seus dados</h3>
+      <label>Nome completo<input id="cNome" autocomplete="name" required></label>
+      <label>E-mail<input id="cEmail" type="email" autocomplete="email" required></label>
+      <div class="dupla">
+        <label>CPF<input id="cCpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
+        <label>Celular<input id="cTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(18) 90000-0000" required></label>
+      </div>
+      <h3>Entrega</h3>
+      <label>CEP<input id="cCep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" required></label>
+      <div id="endereco" hidden>
+        <label>Rua<input id="cRua" autocomplete="address-line1" required></label>
+        <div class="dupla">
+          <label>Número<input id="cNum" inputmode="numeric" required></label>
+          <label>Complemento<input id="cComp" placeholder="Apto, bloco (opcional)"></label>
+        </div>
+        <label>Bairro<input id="cBairro" required></label>
+        <p class="meta" id="cCidade"></p>
+      </div>
+      <div class="resumo">
+        <div><span>Subtotal</span><span id="rSub"></span></div>
+        <div><span>Frete</span><span id="rFrete">Informe o CEP</span></div>
+        <div class="total"><span>Total</span><b id="rTotal"></b></div>
+      </div>
+      <p class="erro-compra" id="erroCompra" role="alert"></p>
+      <button class="btn" type="submit" id="pagar">Ir para o pagamento</button>
+      <p class="note">Você vai para o Mercado Pago para pagar com segurança. Ao continuar, você concorda com as nossas <button type="button" class="link" data-info="trocas">Trocas e Devoluções</button> e a <button type="button" class="link" data-info="privacidade">Política de Privacidade</button>.</p>
+    </form>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -262,6 +294,9 @@ const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const $ = id => document.getElementById(id);
 let produtos = [], filtro = "todas";
 const bag = {};
+try { Object.assign(bag, JSON.parse(localStorage.getItem("angel-sacolinha") || "{}")); } catch {}
+function salvarSacola(){ try { localStorage.setItem("angel-sacolinha", JSON.stringify(bag)); } catch {} }
+const esgotada = p => p.estoque !== null && p.estoque !== undefined && p.estoque <= 0;
 
 // favoritos ficam guardados no navegador da cliente
 let favs = new Set();
@@ -303,10 +338,10 @@ function renderGrid(){
     gridEl.innerHTML = `<p class="status">${msg}</p>`; return;
   }
   gridEl.innerHTML = lista.map(p => `
-    <article class="card">
+    <article class="card${esgotada(p) ? " esgotada" : ""}">
       <button type="button" class="fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}" aria-label="Favoritar ${esc(p.nome)}"><svg class="ic"><use href="#i-coracao"/></svg></button>
       <a class="card-link" href="#p/${p.id}">
-        <div class="thumb${p.foto_ia_url ? " duas" : ""}">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
+        <div class="thumb${p.foto_ia_url ? " duas" : ""}">${esgotada(p) ? `<span class="tag tag-esgotada">Esgotada</span>` : p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
           <img class="img-1" src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy">
           ${p.foto_ia_url ? `<img class="img-2" src="${esc(p.foto_ia_url)}" alt="${esc(p.nome)} sendo usada" loading="lazy">
           <span class="selo-ia">imagem ilustrativa</span>
@@ -316,7 +351,7 @@ function renderGrid(){
         ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
       </a>
       <div class="price-row"><div class="price">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
-      <button type="button" class="add" data-id="${p.id}">Adicionar</button></div>
+      ${esgotada(p) ? `<button type="button" class="add" disabled>Esgotada</button>` : `<button type="button" class="add" data-id="${p.id}">Adicionar</button>`}</div>
     </article>`).join("");
 }
 function renderPeca(id){
@@ -346,10 +381,12 @@ function renderPeca(id){
       <div class="peca-info">
         <h1>${esc(p.nome)}</h1>
         <div class="meta">${esc(p.banho)}${cat ? ` · ${cat[1]}` : ""}</div>
+        ${p.estoque > 0 && p.estoque <= 3 ? `<p class="ultimas">Últimas ${p.estoque === 1 ? "unidade" : p.estoque + " unidades"}!</p>` : ""}
         <div class="peca-preco">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
         ${p.descricao ? `<p class="peca-desc">${esc(p.descricao)}</p>` : ""}
         <div class="peca-acoes">
-          <button type="button" class="btn" data-id="${p.id}" data-add>Adicionar à sacolinha</button>
+          ${esgotada(p) ? `<button type="button" class="btn" disabled>Esgotada</button><p class="note">Quer saber quando voltar? Fale com a gente pelo WhatsApp.</p>`
+            : `<button type="button" class="btn" data-id="${p.id}" data-add>Adicionar à sacolinha</button>`}
           <button type="button" class="btn ghost peca-fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}"><svg class="ic"><use href="#i-coracao"/></svg>${favs.has(p.id) ? "Nos favoritos" : "Favoritar"}</button>
           <a class="btn ghost" href="https://wa.me/${esc(C.WHATSAPP)}?text=${encodeURIComponent(duvida)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whats"/></svg>Tirar dúvida no WhatsApp</a>
         </div>
@@ -365,7 +402,9 @@ function renderFavCount(){ const n = [...favs].filter(id => produtos.some(p => p
 async function carregar(){
   const { data, error } = await db.from("produtos").select("*").eq("ativo", true).order("criado_em", { ascending:false });
   if (error) { const m = `<p class="status">Não foi possível carregar as peças agora. Atualize a página.</p>`; gridEl.innerHTML = m; $("pecaConteudo").innerHTML = m; console.error(error); return; }
-  produtos = data; carregado = true; renderFavCount(); rota(true);
+  produtos = data; carregado = true; renderFavCount();
+  for (const id of Object.keys(bag)) { const p = produtos.find(x => x.id === id); if (!p || esgotada(p)) delete bag[id]; else if (p.estoque != null) bag[id] = Math.min(bag[id], p.estoque); }
+  salvarSacola(); renderBag(); rota(true);
 }
 
 // telas: início (só categorias), lista de uma categoria e a peça em detalhe
@@ -399,7 +438,11 @@ function rota(recarga){
 addEventListener("hashchange", () => rota());
 
 function alternarFav(id){ favs.has(id) ? favs.delete(id) : favs.add(id); salvarFavs(); renderFavCount(); toast(favs.has(id) ? "Guardada nos favoritos" : "Tirada dos favoritos"); }
-function adicionar(id){ bag[id] = (bag[id]||0)+1; renderBag(); toast("Adicionado à sacolinha"); }
+function adicionar(id){
+  const p = produtos.find(x => x.id === id); if (!p || esgotada(p)) return;
+  if (p.estoque != null && (bag[id]||0) >= p.estoque) { toast(`Só temos ${p.estoque} ${p.estoque === 1 ? "unidade" : "unidades"} desta peça`); return; }
+  bag[id] = (bag[id]||0)+1; salvarSacola(); renderBag(); toast("Adicionado à sacolinha");
+}
 function verFoto(thumb, n){
   thumb.classList.toggle("ver-2", n === 2);
   thumb.querySelectorAll("[data-ver]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.ver) === n)));
@@ -436,17 +479,18 @@ modalInfo.addEventListener("click", e => { if (e.target === modalInfo) modalInfo
 
 // sacolinha
 const drawer = $("drawer");
-$("openBag").onclick = () => { drawer.hidden = false; };
+$("openBag").onclick = () => { abrirCompra(false); drawer.hidden = false; };
 $("closeBag").onclick = () => { drawer.hidden = true; };
 drawer.addEventListener("click", e => { if (e.target === drawer) drawer.hidden = true; });
 document.addEventListener("keydown", e => { if (e.key === "Escape") { drawer.hidden = true; modalInfo.hidden = true; } });
 
 function renderBag(){
-  const ids = Object.keys(bag).filter(id => bag[id] > 0);
+  for (const id of Object.keys(bag)) if (!(bag[id] > 0)) delete bag[id];
+  const ids = Object.keys(bag).filter(id => produtos.some(x => x.id === id));
   const n = ids.reduce((s,id) => s + bag[id], 0);
   $("count").textContent = n;
   $("empty").hidden = n > 0;
-  $("checkout").hidden = n === 0;
+  $("checkout").hidden = n === 0 || !$("formCompra").hidden;
   let total = 0; const linhas = [];
   $("items").innerHTML = ids.map(id => {
     const p = produtos.find(x => x.id === id), q = bag[id]; total += p.preco*q;
@@ -458,8 +502,103 @@ function renderBag(){
   const msg = `Olá, Angel! Quero fazer este pedido:\n${linhas.join("\n")}\nTotal: ${brl(total)}\n\nMeu nome:\nMeu CEP:`;
   $("sendWpp").href = `https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent(msg)}`;
 }
-$("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; bag[b.dataset.id] = Math.max(0, bag[b.dataset.id] + Number(b.dataset.d)); renderBag(); });
+$("items").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if(!b) return; const id = b.dataset.id, p = produtos.find(x => x.id === id);
+  const novo = Math.max(0, bag[id] + Number(b.dataset.d));
+  if (p && p.estoque != null && novo > p.estoque) { toast(`Só temos ${p.estoque} ${p.estoque === 1 ? "unidade" : "unidades"} desta peça`); return; }
+  bag[id] = novo; salvarSacola(); renderBag(); });
 let tt; function toast(m){ const el = $("toast"); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(() => el.hidden = true, 1800); }
+
+
+// ---------- compra pelo site (Mercado Pago) ----------
+const so = v => String(v || "").replace(/\D/g, "");
+function mascara(el, tipo){
+  const d = so(el.value);
+  el.value = tipo === "cpf" ? d.slice(0,11).replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2")
+    : tipo === "cep" ? d.slice(0,8).replace(/(\d{5})(\d)/,"$1-$2")
+    : d.slice(0,11).replace(/(\d{2})(\d)/,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2");
+}
+function subtotalSacola(){ return Object.keys(bag).reduce((s,id) => { const p = produtos.find(x => x.id === id); return s + (p ? p.preco * bag[id] : 0); }, 0); }
+let freteAtual = null;
+function mostrarResumo(){
+  const sub = subtotalSacola();
+  $("rSub").textContent = brl(sub);
+  $("rFrete").textContent = freteAtual === null ? "Informe o CEP" : (freteAtual === 0 ? "Grátis" : brl(freteAtual));
+  $("rTotal").textContent = brl(sub + (freteAtual || 0));
+}
+function abrirCompra(aberta){
+  $("formCompra").hidden = !aberta;
+  $("items").hidden = aberta; $("checkout").hidden = aberta || Object.keys(bag).length === 0; $("empty").hidden = true;
+  $("bagTitle").textContent = aberta ? "Finalizar compra" : "Sua sacolinha";
+  if (aberta) { mostrarResumo(); $("erroCompra").textContent = ""; drawer.querySelector(".panel").scrollTop = 0; }
+  else renderBag();
+}
+$("irPagamento").onclick = () => abrirCompra(true);
+$("voltarSacola").onclick = () => abrirCompra(false);
+$("cCpf").addEventListener("input", e => mascara(e.target, "cpf"));
+$("cTel").addEventListener("input", e => mascara(e.target, "tel"));
+$("cCep").addEventListener("input", async e => {
+  mascara(e.target, "cep");
+  const cep = so(e.target.value);
+  freteAtual = null; mostrarResumo();
+  if (cep.length !== 8) return;
+  $("rFrete").textContent = "Calculando…";
+  try {
+    const r = await fetch(`/api/frete?cep=${cep}&subtotal=${subtotalSacola().toFixed(2)}`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.erro || "CEP não encontrado.");
+    $("endereco").hidden = false;
+    if (j.logradouro) $("cRua").value = j.logradouro;
+    if (j.bairro) $("cBairro").value = j.bairro;
+    $("cCidade").textContent = `${j.cidade} - ${j.uf}`;
+    freteAtual = j.frete; mostrarResumo(); $("erroCompra").textContent = "";
+    ($("cRua").value ? $("cNum") : $("cRua")).focus();
+  } catch (err) { $("erroCompra").textContent = err.message; $("rFrete").textContent = "Informe o CEP"; }
+});
+$("formCompra").addEventListener("click", e => { const i = e.target.closest("[data-info]"); if (i) abrirInfo(i.dataset.info); });
+$("formCompra").addEventListener("submit", async e => {
+  e.preventDefault();
+  const erro = m => { $("erroCompra").textContent = m; };
+  const campos = { nome: $("cNome").value.trim(), email: $("cEmail").value.trim(), cpf: so($("cCpf").value), telefone: so($("cTel").value),
+    cep: so($("cCep").value), logradouro: $("cRua").value.trim(), numero: $("cNum").value.trim(), complemento: $("cComp").value.trim(), bairro: $("cBairro").value.trim() };
+  if (campos.nome.split(/\s+/).length < 2) return erro("Escreva seu nome completo.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(campos.email)) return erro("Confira o seu e-mail.");
+  if (campos.cpf.length !== 11) return erro("Confira o seu CPF.");
+  if (campos.telefone.length < 10) return erro("Confira o seu celular com DDD.");
+  if (campos.cep.length !== 8 || freteAtual === null) return erro("Informe um CEP válido para calcular o frete.");
+  if (!campos.logradouro || !campos.numero || !campos.bairro) return erro("Complete o endereço: rua, número e bairro.");
+  $("pagar").disabled = true; $("pagar").textContent = "Abrindo o pagamento…"; erro("");
+  try {
+    const r = await fetch("/api/checkout", { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ itens: Object.keys(bag).map(id => ({ id, qtd: bag[id] })), cliente: campos }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.url) throw new Error(j.erro || "Não foi possível abrir o pagamento. Tente de novo.");
+    location.href = j.url;
+  } catch (err) { erro(err.message); $("pagar").disabled = false; $("pagar").textContent = "Ir para o pagamento"; }
+});
+
+// volta do Mercado Pago: mostra o resultado e confirma o pagamento
+function abrirMensagem(titulo, texto){
+  $("infoConteudo").innerHTML = `<div class="eyebrow">Seu pedido</div><h2 id="infoTitulo">${titulo}</h2><p>${texto}</p>`;
+  modalInfo.hidden = false;
+}
+(async () => {
+  const q = new URLSearchParams(location.search), retorno = q.get("retorno");
+  if (!retorno) return;
+  history.replaceState(null, "", location.pathname + location.hash);
+  if (retorno === "sucesso") {
+    abrirMensagem("Pedido confirmado! 💛", "Seu pagamento foi aprovado. Vamos separar suas peças com carinho e mandar o código de rastreio pelo WhatsApp.");
+    for (const k of Object.keys(bag)) delete bag[k];
+    salvarSacola(); renderBag();
+    const pid = q.get("payment_id") || q.get("collection_id");
+    if (pid) fetch(`/api/confirmar?payment_id=${encodeURIComponent(pid)}`).catch(() => {});
+  } else if (retorno === "pendente") {
+    abrirMensagem("Pagamento em análise", "Assim que o pagamento for confirmado, a gente separa o seu pedido. Se pagou com Pix ou boleto, a confirmação pode levar alguns minutos.");
+    for (const k of Object.keys(bag)) delete bag[k];
+    salvarSacola(); renderBag();
+  } else {
+    abrirMensagem("O pagamento não foi concluído", "Nenhum valor foi cobrado. Suas peças continuam na sacolinha para você tentar de novo, ou pedir pelo WhatsApp.");
+  }
+})();
 
 renderChips(); renderBag(); rota(true); carregar();
 </script>

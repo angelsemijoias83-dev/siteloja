@@ -387,3 +387,28 @@ footer small.ident{color:var(--muted);font-size:.78rem;max-width:40em}
 .lista-pol{margin:0 0 12px;padding-left:1.1em;display:grid;gap:8px;color:var(--muted)}
 .panel.modal b{color:var(--ink);font-weight:700}
 .ident-pol{font-size:.82rem;margin-top:16px!important}
+
+/* ===== Compra pelo site e estoque ===== */
+#modalInfo{z-index:25}
+.opcoes-compra{display:grid;gap:10px}
+.opcoes-compra .btn{display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;padding:13px 18px;font-size:1rem}
+.opcoes-compra .btn.ghost{border-color:var(--line);background:var(--surface)}
+.opcoes-compra .ic{width:20px;height:20px}
+.compra{display:grid;gap:12px}
+.compra h3{font-size:1.05rem;margin:6px 0 0}
+.compra label{display:grid;gap:5px;font-size:.85rem;color:var(--muted)}
+.compra input{font:inherit;font-size:1rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+.compra input:focus{border-color:var(--caramel);outline:none}
+.compra .dupla{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compra .voltar{background:none;border:0;justify-self:start}
+.resumo{display:grid;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-variant-numeric:tabular-nums}
+.resumo>div{display:flex;justify-content:space-between}
+.resumo .total{margin-top:4px}
+.erro-compra{color:#B3261E;font-size:.9rem;margin:0;min-height:1.2em}
+.compra .btn[disabled]{opacity:.6;cursor:wait}
+button.link{background:none;border:0;padding:0;color:var(--caramel);text-decoration:underline;font:inherit;font-size:inherit;cursor:pointer}
+.card.esgotada .thumb img{filter:grayscale(.6);opacity:.7}
+.tag-esgotada{background:var(--ink)!important;color:var(--bg)!important;border-color:var(--ink)!important}
+.add[disabled],.btn[disabled]{opacity:.55;cursor:not-allowed}
+.add[disabled]:hover{background:transparent;color:var(--ink)}
+.ultimas{margin:0;color:var(--caramel);font-style:italic}
