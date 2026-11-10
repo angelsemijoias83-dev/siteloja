@@ -6,6 +6,7 @@ export async function onRequestGet({ request }) {
   const url = new URL(request.url);
   const end = await buscarCep(url.searchParams.get("cep"));
   if (!end) return json(404, { erro: "CEP não encontrado. Confira os números." });
+  if (end.indisponivel) return json(503, { erro: "Não conseguimos consultar o CEP agora. Tente de novo em instantes." });
   const subtotal = Number(url.searchParams.get("subtotal")) || 0;
   const frete = calcularFrete(end.uf, subtotal);
   return json(200, { ...end, frete, gratisAcima: LOJA.FRETE_GRATIS_ACIMA });

@@ -28,6 +28,7 @@ export async function onRequestPost({ request, env }) {
   if (!cliente.numero) return json(400, { erro: "Escreva o número do endereço." });
   const end = await buscarCep(c?.cep);
   if (!end) return json(400, { erro: "CEP não encontrado. Confira os números." });
+  if (end.indisponivel) return json(503, { erro: "Não conseguimos consultar o CEP agora. Tente de novo em instantes." });
   Object.assign(cliente, end, {
     logradouro: String(c?.logradouro || end.logradouro).trim().slice(0, 160),
     bairro: String(c?.bairro || end.bairro).trim().slice(0, 80),

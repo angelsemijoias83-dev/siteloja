@@ -18,15 +18,29 @@ export function calcularFrete(uf, subtotal) {
   return LOJA.FRETE[uf] ?? LOJA.FRETE.outros;
 }
 
-// Busca o endereço pelo CEP (ViaCEP, serviço público e gratuito)
+// Busca o endereço pelo CEP em serviços públicos e gratuitos (ViaCEP e, se falhar, BrasilAPI).
+// Devolve o endereço, null se o CEP não existe, ou { indisponivel: true } se nenhum serviço respondeu.
+async function pegarJson(url) {
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(6000), headers: { accept: "application/json" } });
+    if (r.status === 404 || r.status === 400) return { naoExiste: true };
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { return null; }
+}
 export async function buscarCep(cep) {
   const so = String(cep || "").replace(/\D/g, "");
   if (so.length !== 8) return null;
-  const r = await fetch(`https://viacep.com.br/ws/${so}/json/`);
-  if (!r.ok) return null;
-  const d = await r.json().catch(() => null);
-  if (!d || d.erro) return null;
-  return { cep: so, logradouro: d.logradouro || "", bairro: d.bairro || "", cidade: d.localidade || "", uf: d.uf || "" };
+  let naoExiste = false;
+  for (let tentativa = 0; tentativa < 2; tentativa++) {
+    const v = await pegarJson(`https://viacep.com.br/ws/${so}/json/`);
+    if (v && !v.naoExiste && !v.erro) return { cep: so, logradouro: v.logradouro || "", bairro: v.bairro || "", cidade: v.localidade || "", uf: v.uf || "" };
+    if (v && (v.erro || v.naoExiste)) { naoExiste = true; break; }
+  }
+  const b = await pegarJson(`https://brasilapi.com.br/api/cep/v1/${so}`);
+  if (b && !b.naoExiste && b.state) return { cep: so, logradouro: b.street || "", bairro: b.neighborhood || "", cidade: b.city || "", uf: b.state };
+  if (naoExiste || (b && b.naoExiste)) return null;
+  return { indisponivel: true };
 }
 
 export function cpfValido(cpf) {
