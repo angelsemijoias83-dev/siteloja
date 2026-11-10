@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "local": "wrangler pages dev public --port 8788"
+    "local": "wrangler dev --port 8788 --ip 127.0.0.1"
   },
   "devDependencies": {
     "wrangler": "4.153.0"

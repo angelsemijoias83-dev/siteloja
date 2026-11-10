@@ -47,11 +47,11 @@ Com as credenciais de **teste** do Mercado Pago, use os cartões de teste da pá
 
 ## 4. Colocar no ar (Cloudflare)
 
-1. Crie a conta grátis em **cloudflare.com**.
-2. **Workers & Pages → Create → Pages → Connect to Git** → escolha o repositório **siteloja**.
-3. Configuração: *Framework preset* **None**, *Build command* **vazio**, *Build output directory* **public**.
-4. Em **Settings → Variables and Secrets**, adicione as mesmas chaves do `.dev.vars`, usando as de **produção** do Mercado Pago.
-5. **Custom domains** → adicione `angelsemijoia.com.br`. O Cloudflare mostra 2 servidores DNS para colocar no Registro.br.
+O site roda como **Worker** do Cloudflare (`worker.js` + pasta `public`). Ele está ligado ao GitHub: **cada envio para a branch `main` publica sozinho**.
+
+- Projeto no Cloudflare: **Workers & Pages → angel-semijoias**
+- Chaves: **angel-semijoias → Settings → Variables and Secrets** (as mesmas do `.dev.vars`; Mercado Pago de **produção** quando for vender)
+- Domínio: **angel-semijoias → Settings → Domains & Routes → Add → Custom domain** → `angelsemijoia.com.br`
 
 ## 5. Ajustes do dia a dia
 
