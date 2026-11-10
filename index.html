@@ -207,8 +207,11 @@ function renderGrid(){
     <article class="card">
       <button type="button" class="fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}" aria-label="Favoritar ${esc(p.nome)}"><svg class="ic"><use href="#i-coracao"/></svg></button>
       <a class="card-link" href="#p/${p.id}">
-        <div class="thumb">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
-          <img src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy"></div>
+        <div class="thumb${p.foto_ia_url ? " duas" : ""}">${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
+          <img class="img-1" src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy">
+          ${p.foto_ia_url ? `<img class="img-2" src="${esc(p.foto_ia_url)}" alt="${esc(p.nome)} sendo usada" loading="lazy">
+          <span class="selo-ia">imagem ilustrativa</span>
+          <span class="pontos"><button type="button" data-ver="1" aria-label="Ver foto da peça" aria-pressed="true"></button><button type="button" data-ver="2" aria-label="Ver foto usando a peça" aria-pressed="false"></button></span>` : ""}</div>
         <h3>${esc(p.nome)}</h3>
         <div class="meta">${esc(p.banho)}</div>
         ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
@@ -229,11 +232,18 @@ function renderPeca(id){
   el.innerHTML = `
     <a class="voltar" href="${voltarHref}" data-voltar><svg class="ic"><use href="#i-seta"/></svg>${esc(voltarNome)}</a>
     <div class="peca-grade">
-      <a class="peca-foto" href="${esc(p.foto_url)}" target="_blank" rel="noopener" aria-label="Ver a foto ampliada">
-        ${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
-        <img src="${esc(p.foto_url)}" alt="${esc(p.nome)}">
-        <span class="ampliar">Toque para ampliar</span>
-      </a>
+      <div class="peca-fotos">
+        <a class="peca-foto" href="${esc(p.foto_url)}" target="_blank" rel="noopener" aria-label="Ver a foto ampliada">
+          ${p.destaque ? `<span class="tag">${esc(p.destaque)}</span>` : ""}
+          <img src="${esc(p.foto_url)}" alt="${esc(p.nome)}">
+          <span class="ampliar">Toque para ampliar</span>
+        </a>
+        ${p.foto_ia_url ? `<a class="peca-foto" href="${esc(p.foto_ia_url)}" target="_blank" rel="noopener" aria-label="Ver ampliada a foto com a peça sendo usada">
+          <span class="legenda-ia">Como fica usando</span>
+          <img src="${esc(p.foto_ia_url)}" alt="${esc(p.nome)} sendo usada" loading="lazy">
+          <span class="selo-ia">imagem ilustrativa</span>
+        </a>` : ""}
+      </div>
       <div class="peca-info">
         <h1>${esc(p.nome)}</h1>
         <div class="meta">${esc(p.banho)}${cat ? ` · ${cat[1]}` : ""}</div>
@@ -291,7 +301,13 @@ addEventListener("hashchange", () => rota());
 
 function alternarFav(id){ favs.has(id) ? favs.delete(id) : favs.add(id); salvarFavs(); renderFavCount(); toast(favs.has(id) ? "Guardada nos favoritos" : "Tirada dos favoritos"); }
 function adicionar(id){ bag[id] = (bag[id]||0)+1; renderBag(); toast("Adicionado à sacolinha"); }
+function verFoto(thumb, n){
+  thumb.classList.toggle("ver-2", n === 2);
+  thumb.querySelectorAll("[data-ver]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.ver) === n)));
+}
 gridEl.addEventListener("click", e => {
+  const pt = e.target.closest("[data-ver]");
+  if (pt) { e.preventDefault(); verFoto(pt.closest(".thumb"), Number(pt.dataset.ver)); return; }
   const f = e.target.closest(".fav");
   if (f) { alternarFav(f.dataset.fav); renderGrid(); return; }
   const b = e.target.closest(".add"); if (b) adicionar(b.dataset.id);
