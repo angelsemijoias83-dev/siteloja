@@ -1,5 +1,5 @@
 # Configuração do site no Cloudflare (Worker + arquivos estáticos da pasta public)
-name = "angel-semijoias"
+name = "siteloja"
 main = "worker.js"
 compatibility_date = "2026-10-01"
 
