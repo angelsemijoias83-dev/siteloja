@@ -412,3 +412,9 @@ button.link{background:none;border:0;padding:0;color:var(--caramel);text-decorat
 .add[disabled],.btn[disabled]{opacity:.55;cursor:not-allowed}
 .add[disabled]:hover{background:transparent;color:var(--ink)}
 .ultimas{margin:0;color:var(--caramel);font-style:italic}
+
+/* foto da IA primeiro: o aviso fica sempre visível nela e some quando a foto real aparece */
+.thumb.duas .selo-ia{opacity:1}
+.thumb.duas.ver-2 .selo-ia{opacity:0}
+@media (hover:hover){.thumb.duas:hover .selo-ia{opacity:0}}
+.peca-foto .legenda-ia{z-index:1}
