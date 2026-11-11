@@ -13,9 +13,15 @@ const CATEGORIAS = {
 
 const SISTEMA = `Você é redatora de vendas da Angel Semijoias, uma loja brasileira de semijoias. Seu texto aparece na vitrine do site, ao lado da foto e do preço.
 
-TÍTULO (campo "nome"):
-- De 2 a 5 palavras, fácil de lembrar e com vontade de comprar.
-- Comece pelo tipo de peça e junte um detalhe marcante ou um nome charmoso. Ex.: "Brinco Gota Cristal", "Colar Coração Encantado", "Anel Solitário Brilho Eterno".
+TÍTULO (campo "nome") — comercial, como nas vitrines das grandes lojas de semijoias:
+- De 3 a 6 palavras. A cliente precisa entender na hora o que é a peça e ter vontade de clicar.
+- Estrutura: TIPO + MODELO + DIFERENCIAL.
+  • TIPO: Brinco, Colar, Choker, Anel, Pulseira, Conjunto.
+  • MODELO: o nome que a cliente procura na loja: Ponto de Luz, Argola, Gota, Coração, Solitário, Riviera, Tennis, Escapulário, Medalha, Nossa Senhora, Olho Grego, Borboleta, Cruz, Trevo, Elos, Veneziana, Ear Cuff, Pérola etc.
+  • DIFERENCIAL: o que dá valor e aparece na foto: Cravejado, Zircônias, Pérola, cor da pedra (Verde Esmeralda, Azul Safira, Rosa, Cristal), Pedra Fusion, Dupla Face, Delicado, Maxi, Mini.
+- Ex.: "Brinco Ponto de Luz Zircônia Cristal", "Colar Nossa Senhora Cravejado Azul", "Conjunto Gota Verde Esmeralda", "Anel Solitário Zircônia Cravejado", "Argola Cravejada Maxi", "Choker Riviera Zircônias".
+- Use termos concretos de joalheria. Evite adjetivos vagos ou poéticos ("Encantador", "Vibrante", "Esplendor", "Radiante", "Eterno", "Mágico").
+- Se a peça for da Linha Luxo, pode terminar com "Luxo" (ex.: "Colar Cruz Pedra Fusion Luxo").
 - Sem ponto final, sem emoji, sem aspas.
 
 DESCRIÇÃO (campo "descricao"):
@@ -32,7 +38,7 @@ REGRAS:
 const ESQUEMA = {
   type: "object",
   properties: {
-    nome: { type: "string", description: "Título vendedor de 2 a 5 palavras, começando pelo tipo de peça" },
+    nome: { type: "string", description: "Título comercial de 3 a 6 palavras: tipo + modelo + diferencial" },
     descricao: { type: "string", description: "No máximo 2 frases curtas, até 30 palavras" },
   },
   required: ["nome", "descricao"],
@@ -41,13 +47,14 @@ const ESQUEMA = {
 export async function onRequestPost({ request, env }) {
   if (!(await usuarioLogado(request, env))) return json(401, { erro: "Entre no painel de novo para continuar." });
 
-  const { imagem, categoria, banho, observacoes } = await request.json().catch(() => ({}));
+  const { imagem, categoria, banho, observacoes, luxo } = await request.json().catch(() => ({}));
   const foto = lerImagem(imagem);
   if (!foto) return json(400, { erro: "Envie uma foto em JPG, PNG ou WEBP." });
 
   const pedido = [
     `Tipo de peça: ${CATEGORIAS[categoria] || categoria}.`,
     banho ? `Banho: ${banho}.` : "",
+    luxo ? "Esta peça é da Linha Luxo da loja." : "",
     observacoes ? `Observações da lojista: ${observacoes}` : "",
     "Crie o nome e a descrição desta peça.",
   ].filter(Boolean).join("\n");
