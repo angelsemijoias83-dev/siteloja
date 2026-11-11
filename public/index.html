@@ -32,12 +32,13 @@
   <symbol id="i-anel" viewBox="0 0 24 24"><circle cx="12" cy="14" r="6"/><path d="M9 8l3-4 3 4-3 2z"/></symbol>
   <symbol id="i-conjunto" viewBox="0 0 24 24"><path d="M3 4c2 6 10 6 12 0"/><circle cx="9" cy="12" r="1.5"/><circle cx="18" cy="15" r="1.5"/><path d="M18 16.5v2"/></symbol>
   <symbol id="i-lancamento" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/></symbol>
+  <symbol id="i-coroa" viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z"/><path d="M5 21h14"/></symbol>
   <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
 </svg>
 
 <div class="band">
   <div class="band-trilho" id="faixa">
-    <span><svg class="ic"><use href="#i-diamante"/></svg>Banho de ouro 18k</span>
+    <span><svg class="ic"><use href="#i-diamante"/></svg>Ouro 18k e ródio branco</span>
     <span><svg class="ic"><use href="#i-escudo"/></svg>Garantia de 6 meses</span>
     <span><svg class="ic"><use href="#i-caixa"/></svg><span>Até <b class="nParcelas">6</b>x sem juros</span></span>
     <span><svg class="ic"><use href="#i-caminhao"/></svg>Enviamos para todo o Brasil</span>
@@ -75,7 +76,7 @@
 
 <section class="vantagens" aria-label="Vantagens">
   <div class="wrap">
-    <div><svg class="ic"><use href="#i-diamante"/></svg><b>Qualidade Premium</b><small>Banho de ouro 18k</small></div>
+    <div><svg class="ic"><use href="#i-diamante"/></svg><b>Qualidade Premium</b><small>Banho de ouro 18k e ródio branco</small></div>
     <div><svg class="ic"><use href="#i-escudo"/></svg><b>Garantia<br>de 6 meses</b></div>
     <div><svg class="ic"><use href="#i-cartao"/></svg><b><span>Até <span class="nParcelas">6</span>x</span><br>sem juros</b></div>
     <div><svg class="ic"><use href="#i-caminhao"/></svg><b>Envio para<br>todo o Brasil</b></div>
@@ -96,6 +97,7 @@
   <div class="wrap">
     <a class="voltar" href="#colecao"><svg class="ic"><use href="#i-seta"/></svg>Todas as categorias</a>
     <h2 id="listaTitulo"></h2>
+    <div class="chips filtro-banho" id="filtroBanho" hidden></div>
     <div class="grid" id="grid"><p class="status">Carregando as peças…</p></div>
   </div>
 </section>
@@ -288,11 +290,11 @@
 <script>
 const C = window.ANGEL;
 const db = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
-const cats = [["brincos","Brincos","i-brinco"],["colares","Colares","i-colar"],["chokers","Chokers","i-choker"],["pulseiras","Pulseiras","i-pulseira"],["aneis","Anéis","i-anel"],["conjuntos","Conjuntos","i-conjunto"],["lancamentos","Lançamentos","i-lancamento"],["mais-vendidos","Mais vendidos","i-estrela"]];
+const cats = [["linha-luxo","Linha Luxo","i-coroa"],["brincos","Brincos","i-brinco"],["colares","Colares","i-colar"],["chokers","Chokers","i-choker"],["pulseiras","Pulseiras","i-pulseira"],["aneis","Anéis","i-anel"],["conjuntos","Conjuntos","i-conjunto"],["lancamentos","Lançamentos","i-lancamento"],["mais-vendidos","Mais vendidos","i-estrela"]];
 const brl = v => Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $ = id => document.getElementById(id);
-let produtos = [], filtro = "todas";
+let produtos = [], filtro = "todas", filtroBanho = "";
 const bag = {};
 try { Object.assign(bag, JSON.parse(localStorage.getItem("angel-sacolinha") || "{}")); } catch {}
 function salvarSacola(){ try { localStorage.setItem("angel-sacolinha", JSON.stringify(bag)); } catch {} }
@@ -326,19 +328,30 @@ const chipsEl = $("chips"), gridEl = $("grid");
 let carregado = false, rolagemLista = {}, telaAtual = "";
 function renderChips(){
   chipsEl.innerHTML = cats.map(([k,l,ic]) =>
-    `<a class="cat" href="#c/${k}"><span class="cat-arte"><svg class="ic"><use href="#${ic}"/></svg></span><span class="cat-nome">${l}</span></a>`).join("");
+    `<a class="cat${k === "linha-luxo" ? " cat-luxo" : ""}" href="#c/${k}"><span class="cat-arte"><svg class="ic"><use href="#${ic}"/></svg></span><span class="cat-nome">${l}</span></a>`).join("");
 }
 function visiveis(){
   const combina = p => filtro==="todas" || ({
     favoritos: () => favs.has(p.id),
     lancamentos: () => p.destaque === "Novidade",
+    "linha-luxo": () => p.luxo === true,
     "mais-vendidos": () => p.destaque === "Mais vendido"
   }[filtro] || (() => p.categoria === filtro))();
   return produtos.filter(combina);
 }
 function renderGrid(){
+  $("filtroBanho").hidden = true;
   if (!carregado) { gridEl.innerHTML = `<p class="status">Carregando as peças…</p>`; return; }
-  const lista = visiveis();
+  const todas = visiveis();
+  // filtro por banho (ouro, ródio…) só aparece quando a lista tem mais de um
+  const banhos = [...new Set(todas.map(p => p.banho))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+  if (!banhos.includes(filtroBanho)) filtroBanho = "";
+  if (banhos.length > 1) {
+    $("filtroBanho").innerHTML = [["", "Todos"], ...banhos.map(b => [b, b])].map(([k,l]) =>
+      `<button type="button" class="chip" data-banho="${esc(k)}" aria-pressed="${k === filtroBanho}">${esc(l)}</button>`).join("");
+    $("filtroBanho").hidden = false;
+  }
+  const lista = filtroBanho ? todas.filter(p => p.banho === filtroBanho) : todas;
   if (!lista.length) {
     const msg = filtro==="favoritos" ? "Toque no coração das peças que você amar para guardar aqui."
       : "Nenhuma peça nesta categoria ainda. Volte em breve!";
@@ -355,7 +368,7 @@ function renderGrid(){
           <span class="pontos"><button type="button" data-ver="1" aria-label="Ver como fica usando" aria-pressed="true"></button><button type="button" data-ver="2" aria-label="Ver foto real da peça" aria-pressed="false"></button></span>`
           : `<img class="img-1" src="${esc(p.foto_url)}" alt="${esc(p.nome)}" loading="lazy">`}</div>
         <h3>${esc(p.nome)}</h3>
-        <div class="meta">${esc(p.banho)}</div>
+        <div class="meta">${esc(p.banho)}${p.luxo ? ` · <span class="luxo">Linha Luxo</span>` : ""}</div>
         ${p.descricao ? `<p class="desc">${esc(p.descricao)}</p>` : ""}
       </a>
       <div class="price-row"><div class="price">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
@@ -388,7 +401,7 @@ function renderPeca(id){
       </div>
       <div class="peca-info">
         <h1>${esc(p.nome)}</h1>
-        <div class="meta">${esc(p.banho)}${cat ? ` · ${cat[1]}` : ""}</div>
+        <div class="meta">${esc(p.banho)}${cat ? ` · ${cat[1]}` : ""}${p.luxo ? ` · <span class="luxo">Linha Luxo</span>` : ""}</div>
         ${!temTam(p) && p.estoque > 0 && p.estoque <= 3 ? `<p class="ultimas">Últimas ${p.estoque === 1 ? "unidade" : p.estoque + " unidades"}!</p>` : ""}
         <div class="peca-preco">${brl(p.preco)}<small>ou ${C.PARCELAS}x de ${brl(p.preco/C.PARCELAS)} sem juros</small></div>
         ${p.descricao ? `<p class="peca-desc">${esc(p.descricao)}</p>` : ""}
@@ -439,7 +452,9 @@ function rota(recarga){
   $("peca").hidden = !ehPeca;
   document.title = "Angel Semijoias";
   if (ehLista) {
-    filtro = h.startsWith("c/") ? h.slice(2) : "favoritos";
+    const novoFiltro = h.startsWith("c/") ? h.slice(2) : "favoritos";
+    if (novoFiltro !== filtro) filtroBanho = "";
+    filtro = novoFiltro;
     $("listaTitulo").textContent = tituloLista(h);
     ultimaLista = "#" + h;
     renderGrid();
@@ -486,6 +501,8 @@ $("pecaConteudo").addEventListener("click", e => {
   const v = e.target.closest("[data-voltar]");
   if (v && ultimaLista && history.length > 1) { e.preventDefault(); history.back(); }
 });
+
+$("filtroBanho").addEventListener("click", e => { const b = e.target.closest("[data-banho]"); if (!b) return; filtroBanho = b.dataset.banho; renderGrid(); });
 
 // favoritos
 $("verFavoritos").onclick = () => { location.hash = "#favoritos"; };

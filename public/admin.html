@@ -56,6 +56,8 @@ textarea{min-height:120px;resize:vertical}
 .tam-campo{font-size:.8rem;gap:4px}
 .tam-campo input{padding:6px 8px}
 input:disabled{opacity:.6}
+.check-luxo{display:flex;gap:10px;align-items:center;font-weight:400}
+.check-luxo input{width:20px;height:20px;accent-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -129,6 +131,7 @@ input:disabled{opacity:.6}
         </div>
         <label>Nome da peça<input id="nome" required></label>
         <label>Descrição<textarea id="descricao"></textarea></label>
+        <label class="check-luxo"><input type="checkbox" id="luxo"> <span><b>Linha Luxo</b> <small class="dica">a peça aparece também no cartão “Linha Luxo” da loja</small></span></label>
         <label>Selo (opcional)<input id="destaque" placeholder="Novidade, Mais vendido, Presente…"></label>
         <div class="acoes">
           <button class="btn" type="submit" id="salvar">Salvar peça</button>
@@ -311,6 +314,7 @@ $("formPeca").addEventListener("submit", async e => {
       estoque: $("estoque").value === "" ? null : Math.max(0, Math.floor(Number($("estoque").value))),
       destaque: $("destaque").value.trim() || null,
       tamanhos: lerTamanhos(),
+      luxo: $("luxo").checked,
     };
     if (dados.tamanhos) dados.estoque = Object.values(dados.tamanhos).reduce((a,b) => a+b, 0);
     if (foto) {
@@ -361,7 +365,7 @@ function desenhar(){
     <div class="item ${p.ativo ? "" : "oculto"}">
       <img src="${esc(p.foto_url)}" alt="">
       <div><b style="font-weight:500">${esc(p.nome)}</b>${p.foto_ia_url ? `<span class="ia-tag">+ foto IA</span>` : ""}
-        <div class="meta">${NOMES[p.categoria]} · ${esc(p.banho)} · ${brl(p.preco)}${p.ativo ? "" : " · escondida"}</div>
+        <div class="meta">${NOMES[p.categoria]} · ${esc(p.banho)} · ${brl(p.preco)}${p.luxo ? " · <b>Linha Luxo</b>" : ""}${p.ativo ? "" : " · escondida"}</div>
         <div class="meta">${p.estoque == null ? "Estoque: sem controle" : p.estoque === 0 ? `<b class="esgotada-tag">Esgotada</b>` : `Estoque: ${p.estoque}`}${p.tamanhos ? ` <small>(${textoTamanhos(p.tamanhos)})</small>` : ""}</div></div>
       <div class="botoes">
         <button class="mini" data-acao="editar" data-id="${p.id}">Editar</button>
@@ -378,6 +382,7 @@ $("lista").addEventListener("click", async e => {
     limpar(); editando = p;
     $("categoria").value = p.categoria; $("banho").value = p.banho; $("preco").value = p.preco;
     $("estoque").value = p.estoque ?? "";
+    $("luxo").checked = !!p.luxo;
     $("gradeTam").querySelectorAll("input").forEach(i => i.value = p.tamanhos?.[i.dataset.tam] ?? "");
     atualizarTam();
     $("nome").value = p.nome; $("descricao").value = p.descricao || ""; $("destaque").value = p.destaque || "";

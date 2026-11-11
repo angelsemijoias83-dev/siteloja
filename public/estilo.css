@@ -427,3 +427,12 @@ button.link{background:none;border:0;padding:0;color:var(--caramel);text-decorat
 .tam[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .tam:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
 .tamanhos .note{margin:0}
+
+/* linha luxo e filtro de banho */
+.luxo{color:var(--caramel);font-style:italic}
+.filtro-banho{margin:-4px 0 18px;display:flex;flex-wrap:wrap;gap:8px}
+.filtro-banho .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cat.cat-luxo{grid-column:1/-1;flex-direction:row}
+.cat-luxo .cat-arte{flex:1;height:auto;min-height:96px}
+.cat-luxo .cat-nome{flex:1;display:grid;place-items:center;font-size:1.15rem;letter-spacing:.04em}
+@media (max-width:700px){.cat-luxo .cat-arte{min-height:80px}}
