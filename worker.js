@@ -19,7 +19,9 @@ const ROTAS = {
 
 export default {
   async fetch(request, env, ctx) {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url), { pathname } = url;
+    // atalhos para o painel (endereço certo: /admin)
+    if (/^\/(adm|painel|admim)\/?$/i.test(pathname)) return Response.redirect(`${url.origin}/admin`, 301);
     if (pathname.startsWith("/api/")) {
       const rota = ROTAS[`${request.method} ${pathname.replace(/\/$/, "")}`];
       if (!rota) return json(404, { erro: "Endereço não encontrado." });
