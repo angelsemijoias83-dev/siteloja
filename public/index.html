@@ -414,6 +414,7 @@ function renderPeca(id){
           ${esgotada(p) ? `<button type="button" class="btn" disabled>Esgotada</button><p class="note">Quer saber quando voltar? Fale com a gente pelo WhatsApp.</p>`
             : `<button type="button" class="btn" data-id="${p.id}" data-add>Adicionar à sacolinha</button>`}
           <button type="button" class="btn ghost peca-fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}"><svg class="ic"><use href="#i-coracao"/></svg>${favs.has(p.id) ? "Nos favoritos" : "Favoritar"}</button>
+          <button type="button" class="btn ghost" data-share="${p.id}">Compartilhar esta peça</button>
           <a class="btn ghost" href="https://wa.me/${esc(C.WHATSAPP)}?text=${encodeURIComponent(duvida)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whats"/></svg>Tirar dúvida no WhatsApp</a>
         </div>
       </div>
@@ -482,6 +483,13 @@ function adicionar(id, tam){
   if (d != null && (bag[k]||0) >= d) { toast(`Só temos ${d} ${d === 1 ? "unidade" : "unidades"} ${tam ? "nesta numeração" : "desta peça"}`); return; }
   bag[k] = (bag[k]||0)+1; salvarSacola(); renderBag(); toast(tam ? `Numeração ${tam} adicionada à sacolinha` : "Adicionado à sacolinha");
 }
+function compartilhar(id){
+  const p = produtos.find(x => x.id === id); if (!p) return;
+  const url = `${location.origin}/#p/${id}`;
+  const texto = `${p.nome} (${p.banho}) — ${brl(p.preco)}`;
+  if (navigator.share) { navigator.share({ title: p.nome, text: texto, url }).catch(() => {}); return; }
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto + "\n" + url)}`, "_blank", "noopener");
+}
 function verFoto(thumb, n){
   thumb.classList.toggle("ver-2", n === 2);
   thumb.querySelectorAll("[data-ver]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.ver) === n)));
@@ -494,6 +502,7 @@ gridEl.addEventListener("click", e => {
   const b = e.target.closest(".add"); if (b) adicionar(b.dataset.id);
 });
 $("pecaConteudo").addEventListener("click", e => {
+  const sh = e.target.closest("[data-share]"); if (sh) { compartilhar(sh.dataset.share); return; }
   const f = e.target.closest("[data-fav]"); if (f) { alternarFav(f.dataset.fav); renderPeca(f.dataset.fav); return; }
   const t = e.target.closest("[data-tam]"); if (t) { const id = location.hash.slice(3); tamPeca = { id, tam: t.dataset.tam }; renderPeca(id); return; }
   const b = e.target.closest("[data-add]"); if (b) { adicionar(b.dataset.id, tamPeca.id === b.dataset.id ? tamPeca.tam : null); return; }
