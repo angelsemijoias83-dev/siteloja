@@ -4,7 +4,7 @@ import { json, usuarioLogado, lerImagem, gemini, erroGemini } from "../_lib/comu
 
 // tipos específicos: onde a peça aparece e quantas peças mostrar
 const TIPO = {
-  piercing: { onde: "presa na cartilagem da orelha (na borda de cima, hélice), como um piercing fake de clipe, sem furo no lóbulo", pecas: 1, nome: "piercing fake" },
+  piercing: { onde: "presa SOMENTE na cartilagem da borda de cima da orelha (hélice), com o clipe de piercing fake, como um piercing que não fura a orelha. O lóbulo fica LIMPO, sem nenhuma peça nele. A peça deve ser a MESMA da foto original: mesmo desenho, mesma forma, mesmas pedras e mesma cor. Foto de perto da orelha", pecas: 1, nome: "piercing fake" },
   trio: { onde: "na orelha, com exatamente TRÊS peças: uma no lóbulo (embaixo), uma na parte do meio da cartilagem e uma na borda de cima da orelha. Nenhuma outra peça além dessas três", pecas: 3, nome: "trio de brincos" },
   duo: { onde: "na orelha, com as DUAS peças do duo juntas e bem visíveis (uma no lóbulo e outra na cartilagem, ou uma em cada orelha, o que ficar mais bonito)", pecas: 2, nome: "duo de brincos" },
 };
