@@ -312,6 +312,7 @@ function atualizarSubtipo(){
 }
 function subtipoAtual(){ return $("rotuloSubtipo").hidden ? null : ($("subtipo").value || null); }
 $("categoria").addEventListener("change", () => { atualizarTam(); atualizarSubtipo(); });
+atualizarTam(); atualizarSubtipo(); // ao abrir o painel, mostra o campo da categoria inicial
 $("gradeTam").addEventListener("input", atualizarTam);
 function textoTamanhos(t){ return Object.keys(t).sort((a,b) => a-b).map(n => t[n] > 0 ? `nº ${n}: ${t[n]}` : `<s>nº ${n}</s>`).join(" · "); }
 
