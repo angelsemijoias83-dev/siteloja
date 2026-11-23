@@ -115,6 +115,10 @@ input:disabled{opacity:.6}
             </select></label>
           <label>Preço (R$)<input id="preco" type="number" min="0" step="0.01" inputmode="decimal" required></label>
         </div>
+        <label id="rotuloSubtipo" hidden>Tipo da peça
+          <select id="subtipo"></select>
+          <small class="dica">Use para piercing fake, trio ou duo. Assim a foto com IA mostra exatamente esse tipo de peça.</small>
+        </label>
         <label>Estoque (quantas peças você tem)
           <input id="estoque" type="number" min="0" step="1" inputmode="numeric" placeholder="Deixe vazio para não controlar">
           <small class="dica">Quando chegar a 0, a peça aparece como <b>Esgotada</b> na loja. Vendas pagas no site descontam sozinhas.</small>
@@ -235,7 +239,7 @@ $("criarFotoIa").addEventListener("click", async () => {
     const r = await fetch("/api/foto-ia", {
       method: "POST",
       headers: { "Content-Type":"application/json", Authorization: `Bearer ${data.session?.access_token}` },
-      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value, ajuste: $("ajusteIa").value.trim() }),
+      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value, ajuste: $("ajusteIa").value.trim(), subtipo: subtipoAtual() }),
     });
     const bruto = await r.text();
     let j; try { j = JSON.parse(bruto); } catch { j = { erro: `Erro ${r.status} no servidor: ${bruto.slice(0, 160)}` }; }
@@ -272,7 +276,7 @@ $("gerar").addEventListener("click", async () => {
     const r = await fetch("/api/descrever", {
       method: "POST",
       headers: { "Content-Type":"application/json", Authorization: `Bearer ${data.session?.access_token}` },
-      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value, observacoes: $("observacoes").value, luxo: $("luxo").checked,
+      body: JSON.stringify({ imagem, categoria: $("categoria").value, banho: $("banho").value, observacoes: $("observacoes").value, luxo: $("luxo").checked, subtipo: subtipoAtual(),
         evitar: produtos.filter(p => p.id !== editando?.id).map(p => p.nome) }),
     });
     const bruto = await r.text();
@@ -299,7 +303,15 @@ function atualizarTam(){
   $("estoque").disabled = !!t;
   if (t) $("estoque").value = Object.values(t).reduce((a,b) => a+b, 0);
 }
-$("categoria").addEventListener("change", atualizarTam);
+// tipos específicos de cada categoria (aparecem só quando a categoria tem)
+const SUBTIPOS = { brincos: [["", "Brinco comum"], ["piercing", "Piercing fake"], ["trio", "Trio de brincos"], ["duo", "Duo de brincos"]] };
+function atualizarSubtipo(){
+  const opts = SUBTIPOS[$("categoria").value];
+  $("rotuloSubtipo").hidden = !opts;
+  $("subtipo").innerHTML = (opts || []).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+}
+function subtipoAtual(){ return $("rotuloSubtipo").hidden ? null : ($("subtipo").value || null); }
+$("categoria").addEventListener("change", () => { atualizarTam(); atualizarSubtipo(); });
 $("gradeTam").addEventListener("input", atualizarTam);
 function textoTamanhos(t){ return Object.keys(t).sort((a,b) => a-b).map(n => t[n] > 0 ? `nº ${n}: ${t[n]}` : `<s>nº ${n}</s>`).join(" · "); }
 
@@ -321,7 +333,7 @@ $("formPeca").addEventListener("submit", async e => {
       estoque: $("estoque").value === "" ? null : Math.max(0, Math.floor(Number($("estoque").value))),
       destaque: $("destaque").value.trim() || null,
       tamanhos: lerTamanhos(),
-      luxo: $("luxo").checked,
+      luxo: $("luxo").checked, subtipo: subtipoAtual(),
     };
     if (dados.tamanhos) dados.estoque = Object.values(dados.tamanhos).reduce((a,b) => a+b, 0);
     if (foto) {
@@ -350,7 +362,7 @@ $("formPeca").addEventListener("submit", async e => {
 });
 
 function limpar(){
-  $("formPeca").reset(); $("gradeTam").querySelectorAll("input").forEach(i => i.value = ""); atualizarTam(); foto = null; editando = null; fotoIa = null; removerIa = false;
+  $("formPeca").reset(); $("gradeTam").querySelectorAll("input").forEach(i => i.value = ""); atualizarTam(); atualizarSubtipo(); foto = null; editando = null; fotoIa = null; removerIa = false;
   esconderIa(); msg("msgFotoIa",""); $("ajusteIa").value = ""; $("criarFotoIa").textContent = "✦ Criar foto usando a peça";
   $("previa").hidden = true; $("previa").removeAttribute("src"); $("textoFoto").hidden = false;
   $("tituloForm").textContent = "Nova peça"; $("cancelar").hidden = true; msg("msgIa","");
@@ -390,6 +402,7 @@ $("lista").addEventListener("click", async e => {
     $("categoria").value = p.categoria; $("banho").value = p.banho; $("preco").value = p.preco;
     $("estoque").value = p.estoque ?? "";
     $("luxo").checked = !!p.luxo;
+    atualizarSubtipo(); $("subtipo").value = p.subtipo || "";
     $("gradeTam").querySelectorAll("input").forEach(i => i.value = p.tamanhos?.[i.dataset.tam] ?? "");
     atualizarTam();
     $("nome").value = p.nome; $("descricao").value = p.descricao || ""; $("destaque").value = p.destaque || "";

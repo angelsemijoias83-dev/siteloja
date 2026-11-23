@@ -37,6 +37,12 @@ REGRAS:
 - Descreva só o que aparece na foto e o que a lojista informou.
 - Nunca invente medidas, peso, tipo de pedra, material da base, preço ou garantia.`;
 
+const SUBTIPO_NOME = {
+  piercing: "piercing fake (clipe que prende na cartilagem, sem furo)",
+  trio: "trio de brincos (três brincos vendidos juntos)",
+  duo: "duo de brincos (dois brincos vendidos juntos)",
+};
+
 const ESQUEMA = {
   type: "object",
   properties: {
@@ -49,7 +55,7 @@ const ESQUEMA = {
 export async function onRequestPost({ request, env }) {
   if (!(await usuarioLogado(request, env))) return json(401, { erro: "Entre no painel de novo para continuar." });
 
-  const { imagem, categoria, banho, observacoes, luxo, evitar } = await request.json().catch(() => ({}));
+  const { imagem, categoria, banho, observacoes, luxo, evitar, subtipo } = await request.json().catch(() => ({}));
   // nomes que já existem na loja (o painel manda), para a IA não repetir
   const existentes = (Array.isArray(evitar) ? evitar : []).map((n) => String(n).trim().slice(0, 80)).filter(Boolean).slice(0, 400);
   const chave = (n) => String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
@@ -61,6 +67,7 @@ export async function onRequestPost({ request, env }) {
     `Tipo de peça: ${CATEGORIAS[categoria] || categoria}.`,
     banho ? `Banho: ${banho}.` : "",
     luxo ? "Esta peça é da Linha Luxo da loja." : "",
+    SUBTIPO_NOME[subtipo] ? `Tipo específico: ${SUBTIPO_NOME[subtipo]}. No título, use exatamente esse tipo no começo (ex.: "Piercing Fake ...", "Trio de Brincos ...", "Duo de Brincos ...").` : "",
     observacoes ? `Observações da lojista: ${observacoes}` : "",
     existentes.length ? `Nomes que JÁ EXISTEM na loja (não use nenhum deles):\n${existentes.map((n) => `- ${n}`).join("\n")}` : "",
     "Crie o nome e a descrição desta peça.",
